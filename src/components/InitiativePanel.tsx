@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Combatant } from '../types/combatant';
+import { CheckIcon, EditIcon } from './icons';
 
 interface InitiativePanelProps {
   sortedCombatants: Combatant[];
@@ -33,8 +34,10 @@ export function InitiativePanel({ sortedCombatants, activeId, onSetInitiative, o
           type="button"
           className="edit-initiative-button"
           onClick={() => setFrozenIds(editing ? null : sortedCombatants.map((c) => c.id))}
+          aria-label={editing ? 'Save initiative' : 'Edit initiative'}
+          title={editing ? 'Save initiative' : 'Edit initiative'}
         >
-          {editing ? 'Save' : 'Edit initiative'}
+          {editing ? <CheckIcon /> : <EditIcon />}
         </button>
       </div>
 

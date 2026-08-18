@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Combatant } from '../types/combatant';
 import { CONDITIONS } from '../data/conditions';
 import { StatusChip } from './StatusChip';
+import { HeartIcon } from './icons';
 
 interface HPStatusRowProps {
   combatant: Combatant;
@@ -33,6 +34,7 @@ export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus
           +
         </button>
         <span className="hp-value">
+          <HeartIcon />
           {combatant.currentHP} / {combatant.maxHP}
         </span>
       </div>

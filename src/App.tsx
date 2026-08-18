@@ -34,6 +34,7 @@ function App() {
 
   const headerRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLElement>(null);
+  const iconStripRef = useRef<HTMLElement>(null);
 
   // Requires real movement before a press counts as a drag, so a plain click
   // (or a drag that's released back near its start) never fires a drop.
@@ -54,6 +55,7 @@ function App() {
       const target = e.target as Node;
       if (panelRef.current?.contains(target)) return;
       if (headerRef.current?.contains(target)) return;
+      if (iconStripRef.current?.contains(target)) return;
       setActivePanel(null);
     }
 
@@ -175,6 +177,29 @@ function App() {
       collisionDetection={closestCenter}
     >
       <div className="app-root">
+        <aside className="icon-strip" ref={iconStripRef}>
+          <button
+            type="button"
+            className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
+            onClick={() => togglePanel('monster')}
+            aria-pressed={activePanel === 'monster'}
+            aria-label="Monster compendium"
+            title="Monster compendium"
+          >
+            <MonsterIcon />
+          </button>
+          <button
+            type="button"
+            className={`icon-toggle ${activePanel === 'player' ? 'active' : ''}`}
+            onClick={() => togglePanel('player')}
+            aria-pressed={activePanel === 'player'}
+            aria-label="Add player"
+            title="Add player"
+          >
+            <AddPlayerIcon />
+          </button>
+        </aside>
+
         <PanelDock
           activePanel={activePanel}
           onClose={() => setActivePanel(null)}
@@ -185,28 +210,6 @@ function App() {
 
         <div className="app-shell">
           <header className="app-header" ref={headerRef}>
-            <div className="app-header-icons">
-              <button
-                type="button"
-                className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
-                onClick={() => togglePanel('monster')}
-                aria-pressed={activePanel === 'monster'}
-                aria-label="Monster compendium"
-                title="Monster compendium"
-              >
-                <MonsterIcon />
-              </button>
-              <button
-                type="button"
-                className={`icon-toggle ${activePanel === 'player' ? 'active' : ''}`}
-                onClick={() => togglePanel('player')}
-                aria-pressed={activePanel === 'player'}
-                aria-label="Add player"
-                title="Add player"
-              >
-                <AddPlayerIcon />
-              </button>
-            </div>
             <h1>Roll Order</h1>
             <button
               type="button"

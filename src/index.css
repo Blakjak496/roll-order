@@ -1,29 +1,28 @@
 :root {
-  --bg: #15101c;
-  --bg-panel: #1e1626;
-  --bg-raised: #271c33;
-  --border: #3c2f4a;
-  --border-strong: #5c4a70;
-  --text: #b7abc4;
-  --text-h: #f0e6da;
-  --text-dim: #786d8a;
+  --bg: #120c1a;
+  --bg-chrome: #180f22;
 
-  --accent: #b083f0;
-  --accent-bg: rgba(176, 131, 240, 0.14);
-  --accent-border: rgba(176, 131, 240, 0.5);
+  --parchment: #e9dfc0;
+  --parchment-well: #ddd0a8;
+  --parchment-border: #b8a878;
 
-  --gold: #d3a75c;
-  --gold-bg: rgba(211, 167, 92, 0.12);
-  --gold-border: rgba(211, 167, 92, 0.45);
+  --ink: #3c3122;
+  --ink-soft: #6c5d45;
 
-  --danger: #e0667a;
+  --purple-light: #cdb8f0;
+  --purple: #9576d9;
+  --purple-dark: #4b3777;
+  --purple-bg: rgba(149, 118, 217, 0.16);
+  --purple-border: rgba(149, 118, 217, 0.55);
+
+  --danger: #9c3b3b;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
 
   font: 16px/145% var(--sans);
   color-scheme: dark;
-  color: var(--text);
+  color: var(--parchment);
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -39,7 +38,7 @@ body {
   margin: 0;
   min-height: 100svh;
   background:
-    radial-gradient(ellipse 1200px 500px at 50% -10%, rgba(176, 131, 240, 0.08), transparent 60%),
+    radial-gradient(ellipse 1200px 500px at 50% -10%, rgba(149, 118, 217, 0.1), transparent 60%),
     var(--bg);
 }
 
@@ -47,7 +46,6 @@ h1,
 h2 {
   font-family: var(--serif);
   font-weight: 600;
-  color: var(--text-h);
   letter-spacing: 0.02em;
 }
 
@@ -61,6 +59,6 @@ h2 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--purple-dark);
   border-radius: 999px;
 }
