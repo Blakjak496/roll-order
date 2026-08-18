@@ -40,6 +40,12 @@ const CR_MAX_RETRIES = 5;
 let crActiveCount = 0;
 const crQueue: (() => void)[] = [];
 
+// Rows unmount/remount whenever the sidebar switches away from the monster
+// panel and back (and React StrictMode double-invokes effects on first mount
+// in dev) - without this, each remount before a fetch resolves would enqueue
+// a fresh duplicate request for the same monster.
+const crInFlight = new Map<string, Promise<number>>();
+
 function runNextCrFetch() {
   if (crActiveCount >= CR_MAX_CONCURRENT || crQueue.length === 0) return;
   crActiveCount++;
@@ -61,7 +67,10 @@ function fetchCrWithRetry(index: string, attempt = 0): Promise<number> {
 }
 
 function enqueueCrFetch(index: string): Promise<number> {
-  return new Promise((resolve, reject) => {
+  const inFlight = crInFlight.get(index);
+  if (inFlight) return inFlight;
+
+  const promise = new Promise<number>((resolve, reject) => {
     crQueue.push(() => {
       fetchCrWithRetry(index)
         .then((cr) => {
@@ -77,6 +86,10 @@ function enqueueCrFetch(index: string): Promise<number> {
     });
     runNextCrFetch();
   });
+
+  crInFlight.set(index, promise);
+  promise.finally(() => crInFlight.delete(index)).catch(() => {});
+  return promise;
 }
 
 function formatChallengeRating(cr: number) {

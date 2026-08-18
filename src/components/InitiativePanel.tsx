@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import type { Combatant } from '../types/combatant';
-import { CheckIcon, EditIcon } from './icons';
+import { useState } from "react";
+import type { Combatant } from "../types/combatant";
+import { CheckIcon, EditIcon } from "./icons";
 
 interface InitiativePanelProps {
   sortedCombatants: Combatant[];
@@ -9,14 +9,21 @@ interface InitiativePanelProps {
   onNextTurn: () => void;
 }
 
-export function InitiativePanel({ sortedCombatants, activeId, onSetInitiative, onNextTurn }: InitiativePanelProps) {
+export function InitiativePanel({
+  sortedCombatants,
+  activeId,
+  onSetInitiative,
+  onNextTurn,
+}: InitiativePanelProps) {
   const [frozenIds, setFrozenIds] = useState<string[] | null>(null);
   const editing = frozenIds !== null;
 
   // While editing, keep row order stable (frozen at the moment edit mode was
   // entered) so rows don't jump around as values change - only re-sort on save.
   const displayList = editing
-    ? (frozenIds.map((id) => sortedCombatants.find((c) => c.id === id)).filter(Boolean) as Combatant[])
+    ? (frozenIds
+        .map((id) => sortedCombatants.find((c) => c.id === id))
+        .filter(Boolean) as Combatant[])
     : sortedCombatants;
 
   return (
@@ -33,9 +40,11 @@ export function InitiativePanel({ sortedCombatants, activeId, onSetInitiative, o
         <button
           type="button"
           className="edit-initiative-button"
-          onClick={() => setFrozenIds(editing ? null : sortedCombatants.map((c) => c.id))}
-          aria-label={editing ? 'Save initiative' : 'Edit initiative'}
-          title={editing ? 'Save initiative' : 'Edit initiative'}
+          onClick={() =>
+            setFrozenIds(editing ? null : sortedCombatants.map((c) => c.id))
+          }
+          aria-label={editing ? "Save initiative" : "Edit initiative"}
+          title={editing ? "Save initiative" : "Edit initiative"}
         >
           {editing ? <CheckIcon /> : <EditIcon />}
         </button>
@@ -43,21 +52,35 @@ export function InitiativePanel({ sortedCombatants, activeId, onSetInitiative, o
 
       <ol className="initiative-list">
         {displayList.map((combatant) => (
-          <li key={combatant.id} className={`initiative-item ${combatant.id === activeId ? 'active' : ''}`}>
+          <li
+            key={combatant.id}
+            className={`initiative-item ${combatant.id === activeId ? "active" : ""}`}
+          >
             {editing ? (
               <input
                 className="initiative-value-input"
                 type="number"
-                value={combatant.initiative ?? ''}
+                value={combatant.initiative ?? ""}
                 placeholder="-"
                 onChange={(e) =>
-                  onSetInitiative(combatant.id, e.target.value === '' ? null : Number(e.target.value))
+                  onSetInitiative(
+                    combatant.id,
+                    e.target.value === "" ? null : Number(e.target.value),
+                  )
                 }
               />
             ) : (
-              <span className="initiative-value">{combatant.initiative ?? '—'}</span>
+              <div
+                className={`initiative-value ${combatant.id === activeId ? "active" : ""}`}
+              >
+                {combatant.initiative ?? "—"}
+              </div>
             )}
-            <span className="initiative-name">{combatant.name}</span>
+            <span
+              className={`initiative-name ${combatant.id === activeId ? "active" : ""}`}
+            >
+              {combatant.name}
+            </span>
           </li>
         ))}
       </ol>
