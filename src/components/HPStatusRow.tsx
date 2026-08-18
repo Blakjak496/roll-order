@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDroppable } from '@dnd-kit/core';
 import type { Combatant } from '../types/combatant';
 import { CONDITIONS } from '../data/conditions';
 import { StatusChip } from './StatusChip';
@@ -14,9 +15,10 @@ interface HPStatusRowProps {
 export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus }: HPStatusRowProps) {
   const [amount, setAmount] = useState(1);
   const availableConditions = CONDITIONS.filter((c) => !combatant.statuses.includes(c.key));
+  const { setNodeRef, isOver } = useDroppable({ id: `hp-row-${combatant.id}` });
 
   return (
-    <div className="hp-row">
+    <div ref={setNodeRef} className={`hp-row ${isOver ? 'drop-target' : ''}`}>
       <span className="hp-row-name">{combatant.name}</span>
 
       <div className="hp-controls">

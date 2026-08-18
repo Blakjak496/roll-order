@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndContext, DragOverlay, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { ConditionsPalette } from './components/ConditionsPalette';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
@@ -24,12 +25,20 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'initiative', label: 'Initiative' },
 ];
 
+// closestCenter always resolves `over` to the nearest droppable regardless of actual
+// overlap, so picking an item up and barely moving it can otherwise "land" on a target
+// with no real drop - callers use this to require the dragged rect to genuinely overlap.
+function rectsOverlap(a: { left: number; right: number; top: number; bottom: number }, b: typeof a) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
   const [draggedMonsterDetail, setDraggedMonsterDetail] = useState<MonsterDetail | null>(null);
   const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(null);
+  const [draggedConditionName, setDraggedConditionName] = useState<string | null>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
 
   const headerRef = useRef<HTMLElement>(null);
@@ -83,6 +92,10 @@ function App() {
       fetchMonster(data.index).then(setDraggedMonsterDetail);
       return;
     }
+    if (data?.type === 'condition') {
+      setDraggedConditionName(data.name ?? null);
+      return;
+    }
     setDraggedCombatant(combatants.find((c) => c.id === event.active.id) ?? null);
   }
 
@@ -91,29 +104,33 @@ function App() {
     setDraggedMonsterName(null);
     setDraggedMonsterDetail(null);
     setDraggedCombatant(null);
+    setDraggedConditionName(null);
     const { active, over } = event;
     if (!over) return;
     const data = active.data.current;
+    const activeRect = active.rect.current.translated;
+    const overlaps = activeRect && rectsOverlap(activeRect, over.rect);
 
     if (data?.type === 'monster') {
-      // dropped from the sidebar - valid whether it lands on the column itself or on a card within it.
-      // closestCenter always resolves `over` to the nearest droppable regardless of actual
-      // overlap, so picking an item up and barely moving it can otherwise "land" on the
-      // column with no real drop - require the dragged rect to genuinely overlap the target.
+      // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
       const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
-      const activeRect = active.rect.current.translated;
-      const overlaps =
-        activeRect &&
-        activeRect.left < over.rect.right &&
-        activeRect.right > over.rect.left &&
-        activeRect.top < over.rect.bottom &&
-        activeRect.bottom > over.rect.top;
       if (!isEntitiesTarget || !overlaps) return;
 
       if (prefetchedDetail && prefetchedDetail.index === data.index) {
         setCombatants((prev) => [...prev, monsterToCombatant(prefetchedDetail)]);
       } else {
         addMonsterByIndex(data.index);
+      }
+      return;
+    }
+
+    if (data?.type === 'condition') {
+      const overId = String(over.id);
+      if (!overId.startsWith('hp-row-') || !overlaps) return;
+      const combatantId = overId.slice('hp-row-'.length);
+      const combatant = combatants.find((c) => c.id === combatantId);
+      if (combatant && !combatant.statuses.includes(data.key)) {
+        handleAddStatus(combatantId, data.key);
       }
       return;
     }
@@ -172,6 +189,7 @@ function App() {
         setDraggedMonsterName(null);
         setDraggedMonsterDetail(null);
         setDraggedCombatant(null);
+        setDraggedConditionName(null);
       }}
       autoScroll={false}
       collisionDetection={closestCenter}
@@ -245,15 +263,18 @@ function App() {
 
             <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
               <h2 className="column-title">HP + Status</h2>
-              {combatants.map((combatant) => (
-                <HPStatusRow
-                  key={combatant.id}
-                  combatant={combatant}
-                  onAdjustHP={handleAdjustHP}
-                  onAddStatus={handleAddStatus}
-                  onRemoveStatus={handleRemoveStatus}
-                />
-              ))}
+              <div className="hp-rows">
+                {combatants.map((combatant) => (
+                  <HPStatusRow
+                    key={combatant.id}
+                    combatant={combatant}
+                    onAdjustHP={handleAdjustHP}
+                    onAddStatus={handleAddStatus}
+                    onRemoveStatus={handleRemoveStatus}
+                  />
+                ))}
+              </div>
+              <ConditionsPalette />
             </section>
 
             <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
@@ -309,6 +330,7 @@ function App() {
             )}
           </div>
         )}
+        {draggedConditionName && <div className="condition-chip drag-overlay-chip">{draggedConditionName}</div>}
       </DragOverlay>
     </DndContext>
   );

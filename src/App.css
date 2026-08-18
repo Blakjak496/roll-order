@@ -142,13 +142,22 @@
   letter-spacing: 0.03em;
 }
 
+/* Column 2 (Entities) has no panel of its own - each combatant is its own
+   full floating card, scrolled as a stack, rather than rows on a shared page */
+.entities-column {
+  background: transparent;
+  border: 1px dashed transparent;
+  box-shadow: none;
+  padding: 0;
+  overflow-y: auto;
+}
+
 .entities-column.drop-target {
-  border-color: var(--purple);
-  box-shadow: 0 0 0 1px var(--purple-border), 0 0 24px rgba(149, 118, 217, 0.35);
+  border-color: var(--purple-border);
 }
 
 .empty-hint {
-  color: var(--ink-soft);
+  color: var(--parchment-dim);
   font-size: 0.85rem;
   margin: 0;
   font-style: italic;
@@ -156,10 +165,11 @@
 
 .entity-card {
   border: 1px solid var(--parchment-border);
-  border-radius: 6px;
-  padding: 0.75rem;
+  border-radius: 8px;
+  padding: 1rem;
   background: var(--parchment);
   color: var(--ink);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
 .entity-card.dragging {
@@ -238,6 +248,12 @@
   color: var(--ink);
 }
 
+.hp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .hp-row {
   display: flex;
   flex-direction: column;
@@ -247,6 +263,11 @@
   padding: 0.5rem 0.75rem;
   background: var(--parchment);
   color: var(--ink);
+}
+
+.hp-row.drop-target {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 1px var(--purple-border), 0 0 16px rgba(149, 118, 217, 0.35);
 }
 
 .hp-row-name {
@@ -362,6 +383,55 @@
   border: 1px dashed var(--purple-border);
   background: var(--parchment-well);
   color: var(--ink);
+}
+
+.conditions-palette {
+  margin-top: 0.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--parchment-border);
+}
+
+.conditions-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  color: var(--purple-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.conditions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.condition-chip {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--purple-border);
+  border-radius: 999px;
+  background: var(--purple-bg);
+  color: var(--purple-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.condition-chip:hover {
+  background: var(--purple-border);
+}
+
+.condition-chip.dragging {
+  opacity: 0.35;
+}
+
+.drag-overlay-chip {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  cursor: grabbing;
+  pointer-events: none;
 }
 
 .add-player-form {
@@ -486,7 +556,6 @@
   flex-shrink: 0;
   width: 0;
   overflow: hidden;
-  transition: width 0.25s ease;
 }
 
 .panel-dock.open {

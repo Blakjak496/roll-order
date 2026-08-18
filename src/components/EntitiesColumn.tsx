@@ -17,7 +17,6 @@ export function EntitiesColumn({ combatants, visible, onRemove }: EntitiesColumn
       ref={setNodeRef}
       className={`column entities-column ${visible ? 'visible' : ''} ${isOver ? 'drop-target' : ''}`}
     >
-      <h2 className="column-title">Entities</h2>
       <SortableContext items={combatants.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         {combatants.map((combatant) => (
           <EntityStatCard key={combatant.id} combatant={combatant} onRemove={onRemove} />
