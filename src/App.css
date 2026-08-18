@@ -141,6 +141,7 @@
 }
 
 .status-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -151,6 +152,16 @@
   border: 1px solid var(--accent-border);
 }
 
+.status-chip-label {
+  border: none;
+  background: none;
+  color: var(--text-h);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0.15rem 0;
+}
+
 .status-chip-remove {
   border: none;
   background: none;
@@ -158,6 +169,22 @@
   cursor: pointer;
   padding: 0;
   line-height: 1;
+}
+
+.status-chip-tooltip {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 10;
+  width: 220px;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .add-status {

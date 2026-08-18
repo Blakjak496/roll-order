@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Combatant } from '../types/combatant';
 import { CONDITIONS } from '../data/conditions';
+import { StatusChip } from './StatusChip';
 
 interface HPStatusRowProps {
   combatant: Combatant;
@@ -40,17 +41,12 @@ export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus
         {combatant.statuses.map((key) => {
           const condition = CONDITIONS.find((c) => c.key === key);
           return (
-            <span key={key} className="status-chip" title={condition?.effect ?? ''}>
-              {condition?.name ?? key}
-              <button
-                type="button"
-                className="status-chip-remove"
-                onClick={() => onRemoveStatus(combatant.id, key)}
-                aria-label={`Remove ${condition?.name ?? key}`}
-              >
-                ×
-              </button>
-            </span>
+            <StatusChip
+              key={key}
+              name={condition?.name ?? key}
+              effect={condition?.effect ?? ''}
+              onRemove={() => onRemoveStatus(combatant.id, key)}
+            />
           );
         })}
         {availableConditions.length > 0 && (
