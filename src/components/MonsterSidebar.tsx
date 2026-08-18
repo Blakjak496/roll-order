@@ -1,6 +1,25 @@
 import { useEffect, useState } from 'react';
+import { useDraggable } from '@dnd-kit/core';
 import { searchMonsters } from '../api/srdClient';
 import type { MonsterSummary } from '../types/monster';
+
+function MonsterListItem({ monster }: { monster: MonsterSummary }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `monster-${monster.index}`,
+    data: { type: 'monster', index: monster.index },
+  });
+
+  return (
+    <li
+      ref={setNodeRef}
+      className={`monster-result ${isDragging ? 'dragging' : ''}`}
+      {...listeners}
+      {...attributes}
+    >
+      {monster.name}
+    </li>
+  );
+}
 
 export function MonsterSidebar() {
   const [query, setQuery] = useState('');
@@ -32,7 +51,7 @@ export function MonsterSidebar() {
       {error && <p className="monster-search-error">{error}</p>}
       <ul className="monster-results">
         {results.map((monster) => (
-          <li key={monster.index}>{monster.name}</li>
+          <MonsterListItem key={monster.index} monster={monster} />
         ))}
       </ul>
     </div>

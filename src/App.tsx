@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { EntityStatCard } from './components/EntityStatCard';
+import { DndContext } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
 import { MonsterSidebar } from './components/MonsterSidebar';
+import { fetchMonster } from './api/srdClient';
+import { monsterToCombatant } from './data/combatantFactory';
 import { mockCombatants } from './data/mockCombatants';
 import './App.css';
 
@@ -16,54 +20,61 @@ const TABS: { id: Tab; label: string }[] = [
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
-  const combatants = mockCombatants;
+  const [combatants, setCombatants] = useState(mockCombatants);
   const activeId = combatants[0]?.id ?? null;
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over?.id !== 'entities-column') return;
+    const data = active.data.current;
+    if (data?.type !== 'monster') return;
+
+    fetchMonster(data.index).then((monster) => {
+      setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
+    });
+  }
+
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <h1>Roll Order</h1>
-      </header>
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="app-shell">
+        <header className="app-header">
+          <h1>Roll Order</h1>
+        </header>
 
-      <nav className="tab-switcher">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
-
-      <main className="board">
-        <section className={`column entities-column ${activeTab === 'entities' ? 'visible' : ''}`}>
-          <h2 className="column-title">Entities</h2>
-          {combatants.map((combatant) => (
-            <EntityStatCard key={combatant.id} combatant={combatant} />
+        <nav className="tab-switcher">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
           ))}
-        </section>
+        </nav>
 
-        <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
-          <h2 className="column-title">HP + Status</h2>
-          {combatants.map((combatant) => (
-            <HPStatusRow key={combatant.id} combatant={combatant} />
-          ))}
-        </section>
+        <main className="board">
+          <EntitiesColumn combatants={combatants} visible={activeTab === 'entities'} />
 
-        <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
-          <h2 className="column-title">Initiative</h2>
-          <InitiativePanel combatants={combatants} activeId={activeId} />
-        </section>
-      </main>
+          <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
+            <h2 className="column-title">HP + Status</h2>
+            {combatants.map((combatant) => (
+              <HPStatusRow key={combatant.id} combatant={combatant} />
+            ))}
+          </section>
 
-      {/* Temporary: proves the SRD API connection ahead of the real slide-in panel + drag wiring in step 3 */}
-      <section className="sidebar-check">
-        <h2 className="column-title">SRD monster search (connectivity check)</h2>
-        <MonsterSidebar />
-      </section>
-    </div>
+          <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
+            <h2 className="column-title">Initiative</h2>
+            <InitiativePanel combatants={combatants} activeId={activeId} />
+          </section>
+        </main>
+
+        <section className="monster-sidebar-panel">
+          <h2 className="column-title">Monster sidebar</h2>
+          <MonsterSidebar />
+        </section>
+      </div>
+    </DndContext>
   );
 }
 
