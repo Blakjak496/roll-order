@@ -94,9 +94,19 @@ function App() {
     const data = active.data.current;
 
     if (data?.type === 'monster') {
-      // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
+      // dropped from the sidebar - valid whether it lands on the column itself or on a card within it.
+      // closestCenter always resolves `over` to the nearest droppable regardless of actual
+      // overlap, so picking an item up and barely moving it can otherwise "land" on the
+      // column with no real drop - require the dragged rect to genuinely overlap the target.
       const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
-      if (!isEntitiesTarget) return;
+      const activeRect = active.rect.current.translated;
+      const overlaps =
+        activeRect &&
+        activeRect.left < over.rect.right &&
+        activeRect.right > over.rect.left &&
+        activeRect.top < over.rect.bottom &&
+        activeRect.bottom > over.rect.top;
+      if (!isEntitiesTarget || !overlaps) return;
 
       if (prefetchedDetail && prefetchedDetail.index === data.index) {
         setCombatants((prev) => [...prev, monsterToCombatant(prefetchedDetail)]);
