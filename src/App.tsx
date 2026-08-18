@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EntityStatCard } from './components/EntityStatCard';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
+import { MonsterSidebar } from './components/MonsterSidebar';
 import { mockCombatants } from './data/mockCombatants';
 import './App.css';
 
@@ -56,6 +57,12 @@ function App() {
           <InitiativePanel combatants={combatants} activeId={activeId} />
         </section>
       </main>
+
+      {/* Temporary: proves the SRD API connection ahead of the real slide-in panel + drag wiring in step 3 */}
+      <section className="sidebar-check">
+        <h2 className="column-title">SRD monster search (connectivity check)</h2>
+        <MonsterSidebar />
+      </section>
     </div>
   );
 }

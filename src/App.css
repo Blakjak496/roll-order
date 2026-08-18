@@ -137,6 +137,55 @@
   color: var(--text-h);
 }
 
+.sidebar-check {
+  margin-top: 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.monster-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 320px;
+}
+
+.monster-search {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.monster-search-error {
+  color: #e05252;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.monster-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.monster-results li {
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.monster-results li:hover {
+  background: var(--accent-bg);
+}
+
 @media (max-width: 767px) {
   .tab-switcher {
     display: flex;
