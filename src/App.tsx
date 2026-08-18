@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
-import { AddPlayerForm } from './components/AddPlayerForm';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
-import { MonsterSidebar } from './components/MonsterSidebar';
+import { SidePanel } from './components/SidePanel';
 import { fetchMonster } from './api/srdClient';
 import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
 import type { PlayerFormValues } from './data/combatantFactory';
@@ -24,6 +23,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [combatants, setCombatants] = useState(mockCombatants);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const sortedCombatants = useMemo(
     () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
@@ -77,6 +77,9 @@ function App() {
       <div className="app-shell">
         <header className="app-header">
           <h1>Roll Order</h1>
+          <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)}>
+            + Add combatant
+          </button>
         </header>
 
         <nav className="tab-switcher">
@@ -118,13 +121,7 @@ function App() {
           </section>
         </main>
 
-        <section className="monster-sidebar-panel">
-          <h2 className="column-title">Add player</h2>
-          <AddPlayerForm onAdd={handleAddPlayer} />
-
-          <h2 className="column-title">Monster sidebar</h2>
-          <MonsterSidebar />
-        </section>
+        <SidePanel open={sidebarOpen} onClose={() => setSidebarOpen(false)} onAddPlayer={handleAddPlayer} />
       </div>
     </DndContext>
   );
