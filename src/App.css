@@ -1,0 +1,156 @@
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.tab-switcher {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--text-h);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.column {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.column-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-h);
+}
+
+.entity-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.entity-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.entity-abilities {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+
+.ability-name {
+  font-style: italic;
+}
+
+.hp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.hp-row-name {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.hp-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.status-chips {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.status-chip {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+}
+
+.initiative-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.initiative-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.initiative-item.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.initiative-value {
+  font-weight: 700;
+  min-width: 1.5rem;
+  text-align: center;
+  color: var(--text-h);
+}
+
+@media (max-width: 767px) {
+  .tab-switcher {
+    display: flex;
+  }
+
+  .board {
+    grid-template-columns: 1fr;
+  }
+
+  .column {
+    display: none;
+  }
+
+  .column.visible {
+    display: flex;
+  }
+}
