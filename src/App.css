@@ -258,25 +258,42 @@
 .monster-results {
   list-style: none;
   margin: 0;
-  padding: 0;
-  max-height: 260px;
+  padding: 8px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  background: var(--parchment);
 }
 
 .monster-result {
-  padding: 7px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-small);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--parchment-dark);
+  border-radius: var(--radius-medium);
+  padding: 14px;
+  background: var(--parchment);
+  color: var(--ink);
+  box-shadow: var(--shadow-medium);
   cursor: grab;
   touch-action: none;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.monster-result-name {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.monster-result-cr {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
 }
 
 .monster-result:hover {
@@ -335,7 +352,7 @@
   border: 1px solid var(--parchment-dark);
   border-radius: var(--radius-medium);
   padding: 14px;
-  background: var(--parchment-light);
+  background: var(--parchment);
   color: var(--ink);
   box-shadow: var(--shadow-medium);
 }
@@ -441,17 +458,25 @@
 .hp-rows {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  row-gap: 10px;
+  border: 1px solid var(--parchment-dark);
+  border-radius: var(--radius-small);
+  padding: 10px;
+  background: var(--parchment);
+  color: var(--ink);
+  box-shadow: var(--shadow-medium);
 }
 
 .hp-row {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border: 1px solid var(--border-dark);
+  border: 1px solid var(--parchment-dark);
   border-radius: var(--radius-small);
   padding: 10px;
-  background: var(--bg-panel);
+  background: var(--parchment);
+  box-shadow: var(--shadow-small);
+  color: var(--ink);
 }
 
 .hp-row.drop-target {
@@ -463,7 +488,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--ink);
 }
 
 .hp-controls {
@@ -479,16 +504,16 @@
   flex-shrink: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-small);
-  background: var(--bg-panel-raised);
-  color: var(--text-secondary);
+  background: var(--parchment);
+  /* color: var(--text-secondary); */
   font-family: var(--font-ui);
   font-weight: 700;
   cursor: pointer;
 }
 
 .hp-controls button:hover {
-  border-color: var(--accent-purple);
-  color: var(--text-purple);
+  border-color: var(--parchment-light);
+  /* color: var(--text-pur); */
 }
 
 .hp-amount {
@@ -575,7 +600,7 @@
   z-index: 10;
   width: 220px;
   padding: 10px 12px;
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-medium);
   border: 1px solid var(--border-light);
   background: var(--bg-panel-raised);
   color: var(--text-primary);
@@ -592,7 +617,7 @@
   border-radius: 999px;
   border: 1px dashed var(--border-light);
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--ink);
 }
 
 .conditions-palette {
@@ -622,9 +647,6 @@
   align-items: center;
   gap: 2px;
   padding: 6px 4px;
-  border: 1px solid var(--border-dark);
-  border-radius: var(--radius-small);
-  background: var(--bg-panel);
   color: var(--text-secondary);
   font-family: var(--font-ui);
   font-size: 10px;
@@ -650,7 +672,12 @@
   align-items: center;
   width: 1.75rem;
   height: 1.75rem;
-  font-size: 1.1rem;
+  font-size: 2rem;
+  border: 1px solid var(--border-dark);
+  border-radius: 100%;
+  background: var(--bg-panel);
+  width: 3rem;
+  height: 3rem;
 }
 
 .drag-overlay-chip {
@@ -724,7 +751,7 @@
   border-left: 3px solid transparent;
   border-radius: var(--radius-small);
   padding: 8px 10px;
-  background: var(--bg-panel);
+  background: var(--parchment);
 }
 
 .initiative-item.active {
@@ -738,7 +765,7 @@
   font-weight: 700;
   min-width: 2rem;
   text-align: center;
-  color: var(--text-purple);
+  color: var(--ink);
 }
 
 .initiative-value-input {

@@ -298,7 +298,7 @@ function App() {
             <section
               className={`column hp-column ${activeTab === "hp" ? "visible" : ""}`}
             >
-              <h2 className="column-title">HP + Status</h2>
+              <h2 className="column-title">Combat Tracker</h2>
               <div className="hp-rows">
                 {combatants.map((combatant) => (
                   <HPStatusRow
