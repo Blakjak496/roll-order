@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { AddPlayerForm } from './components/AddPlayerForm';
@@ -23,7 +23,12 @@ const TABS: { id: Tab; label: string }[] = [
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [combatants, setCombatants] = useState(mockCombatants);
-  const activeId = combatants[0]?.id ?? null;
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sortedCombatants = useMemo(
+    () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
+    [combatants],
+  );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -54,6 +59,17 @@ function App() {
 
   function handleAddPlayer(player: PlayerFormValues) {
     setCombatants((prev) => [...prev, playerToCombatant(player)]);
+  }
+
+  function handleSetInitiative(id: string, value: number | null) {
+    setCombatants((prev) => prev.map((c) => (c.id === id ? { ...c, initiative: value } : c)));
+  }
+
+  function handleNextTurn() {
+    if (sortedCombatants.length === 0) return;
+    const currentIndex = sortedCombatants.findIndex((c) => c.id === activeId);
+    const nextIndex = (currentIndex + 1) % sortedCombatants.length;
+    setActiveId(sortedCombatants[nextIndex].id);
   }
 
   return (
@@ -93,7 +109,12 @@ function App() {
 
           <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
             <h2 className="column-title">Initiative</h2>
-            <InitiativePanel combatants={combatants} activeId={activeId} />
+            <InitiativePanel
+              sortedCombatants={sortedCombatants}
+              activeId={activeId}
+              onSetInitiative={handleSetInitiative}
+              onNextTurn={handleNextTurn}
+            />
           </section>
         </main>
 
