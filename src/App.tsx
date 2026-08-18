@@ -103,7 +103,7 @@ function App() {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext onDragEnd={handleDragEnd} autoScroll={false}>
       <div className="app-root">
         <PanelDock
           activePanel={activePanel}
