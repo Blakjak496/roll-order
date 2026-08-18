@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
@@ -57,12 +58,26 @@ function App() {
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (over?.id !== 'entities-column') return;
+    if (!over) return;
     const data = active.data.current;
-    if (data?.type !== 'monster') return;
 
-    fetchMonster(data.index).then((monster) => {
-      setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
+    if (data?.type === 'monster') {
+      // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
+      const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
+      if (!isEntitiesTarget) return;
+
+      fetchMonster(data.index).then((monster) => {
+        setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
+      });
+      return;
+    }
+
+    if (active.id === over.id) return;
+    setCombatants((prev) => {
+      const oldIndex = prev.findIndex((c) => c.id === active.id);
+      const newIndex = prev.findIndex((c) => c.id === over.id);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      return arrayMove(prev, oldIndex, newIndex);
     });
   }
 
@@ -103,7 +118,7 @@ function App() {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} autoScroll={false}>
+    <DndContext onDragEnd={handleDragEnd} autoScroll={false} collisionDetection={closestCenter}>
       <div className="app-root">
         <PanelDock
           activePanel={activePanel}

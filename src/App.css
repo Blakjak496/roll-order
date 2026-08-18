@@ -116,11 +116,36 @@
   padding: 0.75rem;
 }
 
+.entity-card.dragging {
+  opacity: 0.5;
+}
+
 .entity-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
+  color: var(--text-h);
+}
+
+.entity-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: grab;
+  padding: 0;
+  touch-action: none;
+}
+
+.drag-handle:hover {
   color: var(--text-h);
 }
 

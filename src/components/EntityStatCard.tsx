@@ -1,4 +1,7 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import type { Combatant } from '../types/combatant';
+import { DragHandleIcon } from './icons';
 
 interface EntityStatCardProps {
   combatant: Combatant;
@@ -6,10 +9,24 @@ interface EntityStatCardProps {
 }
 
 export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: combatant.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div className="entity-card">
+    <div ref={setNodeRef} style={style} className={`entity-card ${isDragging ? 'dragging' : ''}`}>
       <div className="entity-card-header">
-        <span className="entity-name">{combatant.name}</span>
+        <div className="entity-card-title">
+          <button type="button" className="drag-handle" aria-label="Reorder" {...attributes} {...listeners}>
+            <DragHandleIcon />
+          </button>
+          <span className="entity-name">{combatant.name}</span>
+        </div>
         <div className="entity-card-meta">
           <span className="entity-ac">AC {combatant.ac}</span>
           <button

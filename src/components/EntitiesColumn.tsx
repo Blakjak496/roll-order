@@ -1,4 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { EntityStatCard } from './EntityStatCard';
 import type { Combatant } from '../types/combatant';
 
@@ -17,9 +18,11 @@ export function EntitiesColumn({ combatants, visible, onRemove }: EntitiesColumn
       className={`column entities-column ${visible ? 'visible' : ''} ${isOver ? 'drop-target' : ''}`}
     >
       <h2 className="column-title">Entities</h2>
-      {combatants.map((combatant) => (
-        <EntityStatCard key={combatant.id} combatant={combatant} onRemove={onRemove} />
-      ))}
+      <SortableContext items={combatants.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+        {combatants.map((combatant) => (
+          <EntityStatCard key={combatant.id} combatant={combatant} onRemove={onRemove} />
+        ))}
+      </SortableContext>
       {combatants.length === 0 && <p className="empty-hint">Drag a monster here from the sidebar</p>}
     </section>
   );
