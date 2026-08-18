@@ -12,6 +12,7 @@ import { fetchMonster } from './api/srdClient';
 import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
 import type { PlayerFormValues } from './data/combatantFactory';
 import { usePersistedEncounter } from './hooks/usePersistedEncounter';
+import type { Combatant } from './types/combatant';
 import './App.css';
 
 type Tab = 'entities' | 'hp' | 'initiative';
@@ -26,6 +27,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
+  const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
 
   const headerRef = useRef<HTMLElement>(null);
@@ -69,11 +71,16 @@ function App() {
 
   function handleDragStart(event: DragStartEvent) {
     const data = event.active.data.current;
-    if (data?.type === 'monster') setDraggedMonsterName(data.name ?? null);
+    if (data?.type === 'monster') {
+      setDraggedMonsterName(data.name ?? null);
+      return;
+    }
+    setDraggedCombatant(combatants.find((c) => c.id === event.active.id) ?? null);
   }
 
   function handleDragEnd(event: DragEndEvent) {
     setDraggedMonsterName(null);
+    setDraggedCombatant(null);
     const { active, over } = event;
     if (!over) return;
     const data = active.data.current;
@@ -136,7 +143,10 @@ function App() {
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => setDraggedMonsterName(null)}
+      onDragCancel={() => {
+        setDraggedMonsterName(null);
+        setDraggedCombatant(null);
+      }}
       autoScroll={false}
       collisionDetection={closestCenter}
     >
@@ -237,6 +247,12 @@ function App() {
           <div className="monster-drag-overlay">
             <MonsterIcon />
             <span>{draggedMonsterName}</span>
+          </div>
+        )}
+        {draggedCombatant && (
+          <div className="entity-drag-overlay">
+            <span className="entity-name">{draggedCombatant.name}</span>
+            <span className="entity-ac">AC {draggedCombatant.ac}</span>
           </div>
         )}
       </DragOverlay>
