@@ -16,3 +16,23 @@ export function monsterToCombatant(monster: MonsterDetail): Combatant {
     abilities: monster.actions.map((action) => ({ name: action.name, desc: action.desc })),
   };
 }
+
+export interface PlayerFormValues {
+  name: string;
+  ac: number;
+  maxHP: number;
+  initiativeBonus: number | null;
+}
+
+export function playerToCombatant(player: PlayerFormValues): Combatant {
+  return {
+    id: crypto.randomUUID(),
+    sourceType: 'player',
+    name: player.name,
+    ac: player.ac,
+    maxHP: player.maxHP,
+    currentHP: player.maxHP,
+    statuses: [],
+    initiative: player.initiativeBonus,
+  };
+}

@@ -196,6 +196,31 @@
   color: var(--text);
 }
 
+.add-player-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.add-player-form input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  width: 8rem;
+}
+
+.add-player-form button {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
 .initiative-list {
   list-style: none;
   margin: 0;

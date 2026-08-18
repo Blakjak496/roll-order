@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
+import { AddPlayerForm } from './components/AddPlayerForm';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
 import { MonsterSidebar } from './components/MonsterSidebar';
 import { fetchMonster } from './api/srdClient';
-import { monsterToCombatant } from './data/combatantFactory';
+import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
+import type { PlayerFormValues } from './data/combatantFactory';
 import { mockCombatants } from './data/mockCombatants';
 import './App.css';
 
@@ -48,6 +50,10 @@ function App() {
     setCombatants((prev) =>
       prev.map((c) => (c.id === id ? { ...c, statuses: c.statuses.filter((s) => s !== status) } : c)),
     );
+  }
+
+  function handleAddPlayer(player: PlayerFormValues) {
+    setCombatants((prev) => [...prev, playerToCombatant(player)]);
   }
 
   return (
@@ -92,6 +98,9 @@ function App() {
         </main>
 
         <section className="monster-sidebar-panel">
+          <h2 className="column-title">Add player</h2>
+          <AddPlayerForm onAdd={handleAddPlayer} />
+
           <h2 className="column-title">Monster sidebar</h2>
           <MonsterSidebar />
         </section>
