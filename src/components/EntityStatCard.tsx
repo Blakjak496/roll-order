@@ -28,7 +28,7 @@ export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
           <span className="entity-name">{combatant.name}</span>
         </div>
         <div className="entity-card-meta">
-          <span className="entity-ac">AC {combatant.ac}</span>
+          <span className="entity-ac">AC {combatant.armor_class}</span>
           <button
             type="button"
             className="entity-remove"
@@ -39,11 +39,11 @@ export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
           </button>
         </div>
       </div>
-      {combatant.abilities && combatant.abilities.length > 0 && (
+      {combatant.actions && combatant.actions.length > 0 && (
         <ul className="entity-abilities">
-          {combatant.abilities.map((ability) => (
-            <li key={ability.name}>
-              <span className="ability-name">{ability.name}.</span> {ability.desc}
+          {combatant.actions.map((action) => (
+            <li key={action.name}>
+              <span className="ability-name">{action.name}.</span> {action.desc}
             </li>
           ))}
         </ul>

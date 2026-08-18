@@ -1,16 +1,4 @@
-export interface Ability {
-  name: string;
-  desc: string;
-}
-
-// Shape comes from the SRD API response - reference only, never mutated
-export interface MonsterTemplate {
-  index: string;
-  name: string;
-  armor_class: number;
-  hit_points: number;
-  actions: Ability[];
-}
+import type { MonsterAction, MonsterDetail } from './monster';
 
 export type SourceType = 'monster' | 'player' | 'custom';
 
@@ -19,10 +7,15 @@ export interface Combatant {
   sourceType: SourceType;
   templateIndex?: string;
   name: string;
-  ac: number;
+  armor_class: number;
   maxHP: number;
   currentHP: number;
   statuses: string[];
   initiative: number | null;
-  abilities?: Ability[];
+  // Snapshot at creation time, named to match the SRD's "actions" field it's copied from
+  actions?: MonsterAction[];
+  // Full raw SRD response, kept only for monster-sourced combatants so any
+  // field (challenge_rating, senses, speed, ...) is available without
+  // re-fetching or widening this type later
+  srdMonster?: MonsterDetail;
 }

@@ -6,7 +6,7 @@ interface AddPlayerFormProps {
   onAdd: (player: PlayerFormValues) => void;
 }
 
-const EMPTY = { name: '', ac: '', maxHP: '', initiativeBonus: '' };
+const EMPTY = { name: '', armor_class: '', maxHP: '', initiativeBonus: '' };
 
 export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
   const [values, setValues] = useState(EMPTY);
@@ -14,13 +14,13 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const name = values.name.trim();
-    const ac = Number(values.ac);
+    const armor_class = Number(values.armor_class);
     const maxHP = Number(values.maxHP);
-    if (!name || !Number.isFinite(ac) || !Number.isFinite(maxHP) || maxHP <= 0) return;
+    if (!name || !Number.isFinite(armor_class) || !Number.isFinite(maxHP) || maxHP <= 0) return;
 
     onAdd({
       name,
-      ac,
+      armor_class,
       maxHP,
       initiativeBonus: values.initiativeBonus === '' ? null : Number(values.initiativeBonus),
     });
@@ -39,8 +39,8 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
       <input
         type="number"
         placeholder="AC"
-        value={values.ac}
-        onChange={(e) => setValues({ ...values, ac: e.target.value })}
+        value={values.armor_class}
+        onChange={(e) => setValues({ ...values, armor_class: e.target.value })}
         required
       />
       <input

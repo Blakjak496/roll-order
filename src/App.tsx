@@ -296,13 +296,13 @@ function App() {
           <div className="entity-card drag-overlay-card">
             <div className="entity-card-header">
               <span className="entity-name">{draggedCombatant.name}</span>
-              <span className="entity-ac">AC {draggedCombatant.ac}</span>
+              <span className="entity-ac">AC {draggedCombatant.armor_class}</span>
             </div>
-            {draggedCombatant.abilities && draggedCombatant.abilities.length > 0 && (
+            {draggedCombatant.actions && draggedCombatant.actions.length > 0 && (
               <ul className="entity-abilities">
-                {draggedCombatant.abilities.map((ability) => (
-                  <li key={ability.name}>
-                    <span className="ability-name">{ability.name}.</span> {ability.desc}
+                {draggedCombatant.actions.map((action) => (
+                  <li key={action.name}>
+                    <span className="ability-name">{action.name}.</span> {action.desc}
                   </li>
                 ))}
               </ul>
