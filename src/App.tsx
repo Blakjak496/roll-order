@@ -34,6 +34,22 @@ function App() {
     });
   }
 
+  function handleAdjustHP(id: string, delta: number) {
+    setCombatants((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, currentHP: Math.max(0, Math.min(c.maxHP, c.currentHP + delta)) } : c)),
+    );
+  }
+
+  function handleAddStatus(id: string, status: string) {
+    setCombatants((prev) => prev.map((c) => (c.id === id ? { ...c, statuses: [...c.statuses, status] } : c)));
+  }
+
+  function handleRemoveStatus(id: string, status: string) {
+    setCombatants((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, statuses: c.statuses.filter((s) => s !== status) } : c)),
+    );
+  }
+
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div className="app-shell">
@@ -59,7 +75,13 @@ function App() {
           <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
             <h2 className="column-title">HP + Status</h2>
             {combatants.map((combatant) => (
-              <HPStatusRow key={combatant.id} combatant={combatant} />
+              <HPStatusRow
+                key={combatant.id}
+                combatant={combatant}
+                onAdjustHP={handleAdjustHP}
+                onAddStatus={handleAddStatus}
+                onRemoveStatus={handleRemoveStatus}
+              />
             ))}
           </section>
 

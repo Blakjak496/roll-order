@@ -88,9 +88,8 @@
 
 .hp-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
@@ -101,21 +100,73 @@
   color: var(--text-h);
 }
 
+.hp-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hp-controls button {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.hp-amount {
+  width: 3rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  text-align: center;
+}
+
 .hp-value {
   font-variant-numeric: tabular-nums;
+  margin-left: auto;
 }
 
 .status-chips {
   display: flex;
   gap: 0.35rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-size: 0.75rem;
-  padding: 0.1rem 0.5rem;
+  padding: 0.1rem 0.35rem 0.1rem 0.5rem;
   border-radius: 999px;
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);
+}
+
+.status-chip-remove {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.add-status {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  border: 1px dashed var(--border);
+  background: var(--bg);
+  color: var(--text);
 }
 
 .initiative-list {
