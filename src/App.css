@@ -1,4 +1,11 @@
+.app-root {
+  display: flex;
+  min-height: 100vh;
+}
+
 .app-shell {
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
@@ -21,14 +28,23 @@
   gap: 0.5rem;
 }
 
-.sidebar-toggle {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--accent-border);
+.icon-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-toggle.active {
+  border-color: var(--accent-border);
   background: var(--accent-bg);
   color: var(--text-h);
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .new-encounter-button {
@@ -345,56 +361,53 @@
   padding: 0.3rem;
 }
 
-.side-panel-backdrop {
+.panel-backdrop {
+  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 40;
 }
 
-.side-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: min(360px, 100vw);
-  background: var(--bg);
+.panel-dock {
+  flex-shrink: 0;
+  width: 0;
+  overflow: hidden;
+  border-left: 1px solid transparent;
+  transition: width 0.25s ease;
+}
+
+.panel-dock.open {
+  width: 340px;
   border-left: 1px solid var(--border);
+}
+
+.panel-dock-inner {
+  width: 340px;
+  height: 100%;
+  box-sizing: border-box;
   padding: 1.25rem;
   overflow-y: auto;
-  transform: translateX(100%);
-  transition: transform 0.25s ease;
-  z-index: 50;
 }
 
-.side-panel.open {
-  transform: translateX(0);
-}
-
-.side-panel-header {
+.panel-dock-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
 
-.side-panel-header .column-title {
+.panel-dock-header .column-title {
   margin: 0;
 }
 
-.side-panel-close {
+.panel-dock-close {
   border: none;
   background: none;
   color: var(--text-h);
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
-}
-
-.side-panel-subtitle {
-  margin: 1.25rem 0 0.5rem;
-  font-size: 0.95rem;
-  color: var(--text-h);
 }
 
 .monster-sidebar {
@@ -459,5 +472,29 @@
 
   .column.visible {
     display: flex;
+  }
+
+  .panel-backdrop {
+    display: block;
+  }
+
+  .panel-dock {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: min(360px, 100vw);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 50;
+  }
+
+  .panel-dock.open {
+    transform: translateX(0);
+  }
+
+  .panel-dock-inner {
+    width: 100%;
   }
 }

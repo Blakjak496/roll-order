@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
-import { SidePanel } from './components/SidePanel';
+import { PanelDock } from './components/PanelDock';
+import type { PanelKind } from './components/PanelDock';
+import { AddPlayerIcon, MonsterIcon } from './components/icons';
 import { fetchMonster } from './api/srdClient';
 import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
 import type { PlayerFormValues } from './data/combatantFactory';
@@ -21,13 +23,35 @@ const TABS: { id: Tab; label: string }[] = [
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
+
+  const headerRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
 
   const sortedCombatants = useMemo(
     () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
     [combatants],
   );
+
+  // Clicking outside the panel or the header (which holds its toggle icons) closes it
+  useEffect(() => {
+    if (!activePanel) return;
+
+    function handlePointerDown(e: PointerEvent) {
+      const target = e.target as Node;
+      if (panelRef.current?.contains(target)) return;
+      if (headerRef.current?.contains(target)) return;
+      setActivePanel(null);
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [activePanel]);
+
+  function togglePanel(panel: PanelKind) {
+    setActivePanel((current) => (current === panel ? null : panel));
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -78,71 +102,95 @@ function App() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="app-shell">
-        <header className="app-header">
-          <h1>Roll Order</h1>
-          <div className="app-header-actions">
-            <button
-              type="button"
-              className="new-encounter-button"
-              onClick={() => {
-                if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
-                  newEncounter();
-                }
-              }}
-            >
-              New encounter
-            </button>
-            <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)}>
-              + Add combatant
-            </button>
-          </div>
-        </header>
+      <div className="app-root">
+        <div className="app-shell">
+          <header className="app-header" ref={headerRef}>
+            <h1>Roll Order</h1>
+            <div className="app-header-actions">
+              <button
+                type="button"
+                className="new-encounter-button"
+                onClick={() => {
+                  if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
+                    newEncounter();
+                  }
+                }}
+              >
+                New encounter
+              </button>
+              <button
+                type="button"
+                className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
+                onClick={() => togglePanel('monster')}
+                aria-pressed={activePanel === 'monster'}
+                aria-label="Monster compendium"
+                title="Monster compendium"
+              >
+                <MonsterIcon />
+              </button>
+              <button
+                type="button"
+                className={`icon-toggle ${activePanel === 'player' ? 'active' : ''}`}
+                onClick={() => togglePanel('player')}
+                aria-pressed={activePanel === 'player'}
+                aria-label="Add player"
+                title="Add player"
+              >
+                <AddPlayerIcon />
+              </button>
+            </div>
+          </header>
 
-        <nav className="tab-switcher">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-
-        <main className="board">
-          <EntitiesColumn
-            combatants={combatants}
-            visible={activeTab === 'entities'}
-            onRemove={handleRemoveCombatant}
-          />
-
-          <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
-            <h2 className="column-title">HP + Status</h2>
-            {combatants.map((combatant) => (
-              <HPStatusRow
-                key={combatant.id}
-                combatant={combatant}
-                onAdjustHP={handleAdjustHP}
-                onAddStatus={handleAddStatus}
-                onRemoveStatus={handleRemoveStatus}
-              />
+          <nav className="tab-switcher">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
             ))}
-          </section>
+          </nav>
 
-          <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
-            <h2 className="column-title">Initiative</h2>
-            <InitiativePanel
-              sortedCombatants={sortedCombatants}
-              activeId={activeId}
-              onSetInitiative={handleSetInitiative}
-              onNextTurn={handleNextTurn}
+          <main className="board">
+            <EntitiesColumn
+              combatants={combatants}
+              visible={activeTab === 'entities'}
+              onRemove={handleRemoveCombatant}
             />
-          </section>
-        </main>
 
-        <SidePanel open={sidebarOpen} onClose={() => setSidebarOpen(false)} onAddPlayer={handleAddPlayer} />
+            <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
+              <h2 className="column-title">HP + Status</h2>
+              {combatants.map((combatant) => (
+                <HPStatusRow
+                  key={combatant.id}
+                  combatant={combatant}
+                  onAdjustHP={handleAdjustHP}
+                  onAddStatus={handleAddStatus}
+                  onRemoveStatus={handleRemoveStatus}
+                />
+              ))}
+            </section>
+
+            <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
+              <h2 className="column-title">Initiative</h2>
+              <InitiativePanel
+                sortedCombatants={sortedCombatants}
+                activeId={activeId}
+                onSetInitiative={handleSetInitiative}
+                onNextTurn={handleNextTurn}
+              />
+            </section>
+          </main>
+        </div>
+
+        <PanelDock
+          activePanel={activePanel}
+          onClose={() => setActivePanel(null)}
+          onAddPlayer={handleAddPlayer}
+          panelRef={panelRef}
+        />
       </div>
     </DndContext>
   );
