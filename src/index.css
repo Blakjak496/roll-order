@@ -1,31 +1,138 @@
 :root {
-  --bg: #120c1a;
-  --bg-chrome: #180f22;
+  /* =========================================================
+     BACKGROUNDS
+     ========================================================= */
 
-  --parchment: #e9dfc0;
-  --parchment-well: #ddd0a8;
-  --parchment-border: #b8a878;
-  --parchment-dim: #8f80a8;
+  --bg-void: #0b0810;
+  --bg-deep: #100b16;
+  --bg-primary: #15101c;
+  --bg-secondary: #1c1424;
+  --bg-panel: #21182a;
+  --bg-panel-raised: #281d32;
 
-  --ink: #3c3122;
-  --ink-soft: #6c5d45;
+  /* =========================================================
+     PURPLE
+     ========================================================= */
 
-  --purple-light: #cdb8f0;
-  --purple: #9576d9;
-  --purple-dark: #4b3777;
-  --purple-bg: rgba(149, 118, 217, 0.16);
-  --purple-border: rgba(149, 118, 217, 0.55);
+  --purple-950: #180c24;
+  --purple-900: #24102f;
+  --purple-800: #351642;
+  --purple-700: #4b2059;
+  --purple-600: #653071;
+  --purple-500: #81468f;
+  --purple-400: #a05caf;
+  --purple-300: #bd7ac8;
+  --purple-200: #d5a2db;
+  --purple-100: #ecd8ed;
 
-  --danger: #9c3b3b;
+  --accent-purple: #9b5bb0;
+  --accent-purple-bright: #c77bd4;
+  --accent-purple-glow: rgba(174, 91, 195, 0.35);
 
-  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
-  --serif: 'Crimson Text', Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
-  --display: 'Cinzel', Georgia, serif;
+  /* =========================================================
+     GOLD / BRASS
+     ========================================================= */
 
-  font: 16px/145% var(--sans);
+  --gold-950: #21180a;
+  --gold-900: #35260e;
+  --gold-800: #594019;
+  --gold-700: #765824;
+  --gold-600: #967237;
+  --gold-500: #b08a4a;
+  --gold-400: #c8a665;
+  --gold-300: #ddc58b;
+  --gold-200: #ead9ad;
+  --gold-100: #f3e9ca;
+
+  --accent-gold: #b89a5a;
+  --accent-gold-bright: #d6bd7b;
+  --accent-gold-glow: rgba(204, 170, 94, 0.25);
+
+  /* =========================================================
+     PARCHMENT
+     ========================================================= */
+
+  --parchment-dark: #a9956c;
+  --parchment: #c7b98f;
+  --parchment-light: #d8cba5;
+  --parchment-bright: #e5d9b8;
+  --parchment-white: #eee5cb;
+
+  --ink: #211a14;
+  --ink-soft: #403528;
+  --ink-muted: #695b46;
+
+  /* =========================================================
+     TEXT
+     ========================================================= */
+
+  --text-primary: #e7dcc1;
+  --text-secondary: #b9ad99;
+  --text-muted: #776d7b;
+  --text-disabled: #514957;
+
+  --text-purple: #d6a5df;
+  --text-gold: #d7bd7d;
+
+  /* =========================================================
+     BORDERS
+     ========================================================= */
+
+  --border-dark: #33283a;
+  --border: #4b3a50;
+  --border-light: #66506a;
+
+  --border-gold: #806a3b;
+  --border-gold-bright: #b09453;
+
+  /* =========================================================
+     GAME STATES
+     ========================================================= */
+
+  --hp-good: #719b62;
+  --hp-good-bg: #1d3020;
+
+  --hp-warning: #b69a50;
+  --hp-warning-bg: #352d18;
+
+  --hp-danger: #a84e4e;
+  --hp-danger-bg: #351b1d;
+
+  --condition-purple: #8c5aa0;
+  --condition-blue: #557b9b;
+  --condition-green: #668d5b;
+  --condition-red: #a05252;
+  --condition-gold: #b18a45;
+
+  /* =========================================================
+     SHADOWS
+     ========================================================= */
+
+  --shadow-small: 0 2px 6px rgba(0, 0, 0, 0.35);
+
+  --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+  --shadow-large: 0 14px 40px rgba(0, 0, 0, 0.65);
+
+  --shadow-purple: 0 0 18px rgba(155, 91, 176, 0.18);
+
+  /* =========================================================
+     RADII
+     ========================================================= */
+
+  --radius-small: 4px;
+  --radius-medium: 7px;
+  --radius-large: 10px;
+
+  /* =========================================================
+     TYPOGRAPHY
+     ========================================================= */
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Crimson Text', serif;
+  --font-ui: 'Inter', sans-serif;
+
   color-scheme: dark;
-  color: var(--parchment);
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -36,24 +143,51 @@
   box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  min-height: 100svh;
+}
+
+body {
   background:
-    radial-gradient(ellipse 1200px 500px at 50% -10%, rgba(149, 118, 217, 0.1), transparent 60%),
-    var(--bg);
+    radial-gradient(circle at 50% 35%, rgba(105, 53, 120, 0.08), transparent 45%),
+    var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  color: inherit;
 }
 
 h1,
-h2 {
-  font-family: var(--display);
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -61,6 +195,10 @@ h2 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--purple-dark);
-  border-radius: 999px;
+  background: var(--border-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-purple);
 }

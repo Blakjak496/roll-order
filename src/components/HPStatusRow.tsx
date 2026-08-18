@@ -17,6 +17,9 @@ export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus
   const availableConditions = CONDITIONS.filter((c) => !combatant.statuses.includes(c.key));
   const { setNodeRef, isOver } = useDroppable({ id: `hp-row-${combatant.id}` });
 
+  const hpRatio = combatant.maxHP > 0 ? combatant.currentHP / combatant.maxHP : 0;
+  const hpState = hpRatio <= 0.25 ? 'danger' : hpRatio <= 0.5 ? 'warning' : 'good';
+
   return (
     <div ref={setNodeRef} className={`hp-row ${isOver ? 'drop-target' : ''}`}>
       <span className="hp-row-name">{combatant.name}</span>
@@ -35,7 +38,7 @@ export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus
         <button type="button" onClick={() => onAdjustHP(combatant.id, amount)} aria-label="Heal">
           +
         </button>
-        <span className="hp-value">
+        <span className={`hp-value hp-${hpState}`}>
           <HeartIcon />
           {combatant.currentHP} / {combatant.maxHP}
         </span>

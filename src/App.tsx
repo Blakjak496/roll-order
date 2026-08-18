@@ -1,46 +1,71 @@
-import { useMemo, useState } from 'react';
-import { DndContext, DragOverlay, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
-import { ActivePanelColumn } from './components/ActivePanelColumn';
-import type { PanelKind } from './components/ActivePanelColumn';
-import { ConditionsPalette } from './components/ConditionsPalette';
-import { EntitiesColumn } from './components/EntitiesColumn';
-import { HPStatusRow } from './components/HPStatusRow';
-import { InitiativePanel } from './components/InitiativePanel';
-import { AddPlayerIcon, MonsterIcon } from './components/icons';
-import { fetchMonster } from './api/srdClient';
-import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
-import type { PlayerFormValues } from './data/combatantFactory';
-import { usePersistedEncounter } from './hooks/usePersistedEncounter';
-import type { Combatant } from './types/combatant';
-import type { MonsterDetail } from './types/monster';
-import './App.css';
+import { useMemo, useState } from "react";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { ActivePanelColumn } from "./components/ActivePanelColumn";
+import type { PanelKind } from "./components/ActivePanelColumn";
+import { ConditionsPalette } from "./components/ConditionsPalette";
+import { EntitiesColumn } from "./components/EntitiesColumn";
+import { HPStatusRow } from "./components/HPStatusRow";
+import { InitiativePanel } from "./components/InitiativePanel";
+import { AddPlayerIcon, MonsterIcon } from "./components/icons";
+import { fetchMonster } from "./api/srdClient";
+import { monsterToCombatant, playerToCombatant } from "./data/combatantFactory";
+import type { PlayerFormValues } from "./data/combatantFactory";
+import { usePersistedEncounter } from "./hooks/usePersistedEncounter";
+import type { Combatant } from "./types/combatant";
+import type { MonsterDetail } from "./types/monster";
+import "./App.css";
 
-type Tab = 'panel' | 'entities' | 'hp' | 'initiative';
+type Tab = "panel" | "entities" | "hp" | "initiative";
 
 // closestCenter always resolves `over` to the nearest droppable regardless of actual
 // overlap, so picking an item up and barely moving it can otherwise "land" on a target
 // with no real drop - callers use this to require the dragged rect to genuinely overlap.
-function rectsOverlap(a: { left: number; right: number; top: number; bottom: number }, b: typeof a) {
-  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+function rectsOverlap(
+  a: { left: number; right: number; top: number; bottom: number },
+  b: typeof a,
+) {
+  return (
+    a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+  );
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('panel');
-  const [activePanel, setActivePanel] = useState<PanelKind>('monster');
-  const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
-  const [draggedMonsterDetail, setDraggedMonsterDetail] = useState<MonsterDetail | null>(null);
-  const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(null);
-  const [draggedConditionName, setDraggedConditionName] = useState<string | null>(null);
-  const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
+  const [activeTab, setActiveTab] = useState<Tab>("panel");
+  const [activePanel, setActivePanel] = useState<PanelKind>("monster");
+  const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(
+    null,
+  );
+  const [draggedMonsterDetail, setDraggedMonsterDetail] =
+    useState<MonsterDetail | null>(null);
+  const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(
+    null,
+  );
+  const [draggedConditionName, setDraggedConditionName] = useState<
+    string | null
+  >(null);
+  const { combatants, setCombatants, activeId, setActiveId, newEncounter } =
+    usePersistedEncounter();
 
   // Requires real movement before a press counts as a drag, so a plain click
   // (or a drag that's released back near its start) never fires a drop.
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+  );
 
   const sortedCombatants = useMemo(
-    () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
+    () =>
+      [...combatants].sort(
+        (a, b) => (b.initiative ?? -1) - (a.initiative ?? -1),
+      ),
     [combatants],
   );
 
@@ -52,7 +77,7 @@ function App() {
 
   function handleDragStart(event: DragStartEvent) {
     const data = event.active.data.current;
-    if (data?.type === 'monster') {
+    if (data?.type === "monster") {
       setDraggedMonsterName(data.name ?? null);
       setDraggedMonsterDetail(null);
       // Prefetch full detail so the drag overlay can show a real card (AC, abilities)
@@ -60,11 +85,13 @@ function App() {
       fetchMonster(data.index).then(setDraggedMonsterDetail);
       return;
     }
-    if (data?.type === 'condition') {
+    if (data?.type === "condition") {
       setDraggedConditionName(data.name ?? null);
       return;
     }
-    setDraggedCombatant(combatants.find((c) => c.id === event.active.id) ?? null);
+    setDraggedCombatant(
+      combatants.find((c) => c.id === event.active.id) ?? null,
+    );
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -79,23 +106,28 @@ function App() {
     const activeRect = active.rect.current.translated;
     const overlaps = activeRect && rectsOverlap(activeRect, over.rect);
 
-    if (data?.type === 'monster') {
+    if (data?.type === "monster") {
       // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
-      const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
+      const isEntitiesTarget =
+        over.id === "entities-column" ||
+        combatants.some((c) => c.id === over.id);
       if (!isEntitiesTarget || !overlaps) return;
 
       if (prefetchedDetail && prefetchedDetail.index === data.index) {
-        setCombatants((prev) => [...prev, monsterToCombatant(prefetchedDetail)]);
+        setCombatants((prev) => [
+          ...prev,
+          monsterToCombatant(prefetchedDetail),
+        ]);
       } else {
         addMonsterByIndex(data.index);
       }
       return;
     }
 
-    if (data?.type === 'condition') {
+    if (data?.type === "condition") {
       const overId = String(over.id);
-      if (!overId.startsWith('hp-row-') || !overlaps) return;
-      const combatantId = overId.slice('hp-row-'.length);
+      if (!overId.startsWith("hp-row-") || !overlaps) return;
+      const combatantId = overId.slice("hp-row-".length);
       const combatant = combatants.find((c) => c.id === combatantId);
       if (combatant && !combatant.statuses.includes(data.key)) {
         handleAddStatus(combatantId, data.key);
@@ -114,17 +146,32 @@ function App() {
 
   function handleAdjustHP(id: string, delta: number) {
     setCombatants((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, currentHP: Math.max(0, Math.min(c.maxHP, c.currentHP + delta)) } : c)),
+      prev.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              currentHP: Math.max(0, Math.min(c.maxHP, c.currentHP + delta)),
+            }
+          : c,
+      ),
     );
   }
 
   function handleAddStatus(id: string, status: string) {
-    setCombatants((prev) => prev.map((c) => (c.id === id ? { ...c, statuses: [...c.statuses, status] } : c)));
+    setCombatants((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, statuses: [...c.statuses, status] } : c,
+      ),
+    );
   }
 
   function handleRemoveStatus(id: string, status: string) {
     setCombatants((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, statuses: c.statuses.filter((s) => s !== status) } : c)),
+      prev.map((c) =>
+        c.id === id
+          ? { ...c, statuses: c.statuses.filter((s) => s !== status) }
+          : c,
+      ),
     );
   }
 
@@ -138,7 +185,9 @@ function App() {
   }
 
   function handleSetInitiative(id: string, value: number | null) {
-    setCombatants((prev) => prev.map((c) => (c.id === id ? { ...c, initiative: value } : c)));
+    setCombatants((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, initiative: value } : c)),
+    );
   }
 
   function handleNextTurn() {
@@ -163,12 +212,30 @@ function App() {
       collisionDetection={closestCenter}
     >
       <div className="app-root">
+        <header className="app-header">
+          <h1>Roll Order</h1>
+          <button
+            type="button"
+            className="button new-encounter-button"
+            onClick={() => {
+              if (
+                combatants.length === 0 ||
+                confirm("Start a new encounter? This clears the current one.")
+              ) {
+                newEncounter();
+              }
+            }}
+          >
+            New encounter
+          </button>
+        </header>
+
         <aside className="icon-strip">
           <button
             type="button"
-            className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
-            onClick={() => setActivePanel('monster')}
-            aria-pressed={activePanel === 'monster'}
+            className={`icon-toggle ${activePanel === "monster" ? "active" : ""}`}
+            onClick={() => setActivePanel("monster")}
+            aria-pressed={activePanel === "monster"}
             aria-label="Monster compendium"
             title="Monster compendium"
           >
@@ -176,9 +243,9 @@ function App() {
           </button>
           <button
             type="button"
-            className={`icon-toggle ${activePanel === 'player' ? 'active' : ''}`}
-            onClick={() => setActivePanel('player')}
-            aria-pressed={activePanel === 'player'}
+            className={`icon-toggle ${activePanel === "player" ? "active" : ""}`}
+            onClick={() => setActivePanel("player")}
+            aria-pressed={activePanel === "player"}
             aria-label="Add player"
             title="Add player"
           >
@@ -187,40 +254,28 @@ function App() {
         </aside>
 
         <div className="app-shell">
-          <header className="app-header">
-            <h1>Roll Order</h1>
-            <button
-              type="button"
-              className="new-encounter-button"
-              onClick={() => {
-                if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
-                  newEncounter();
-                }
-              }}
-            >
-              New encounter
-            </button>
-          </header>
-
           <nav className="tab-switcher">
             <button
-              className={`tab-button ${activeTab === 'panel' ? 'active' : ''}`}
-              onClick={() => setActiveTab('panel')}
+              className={`tab-button ${activeTab === "panel" ? "active" : ""}`}
+              onClick={() => setActiveTab("panel")}
             >
-              {activePanel === 'monster' ? 'Compendium' : 'Add player'}
+              {activePanel === "monster" ? "Compendium" : "Add player"}
             </button>
             <button
-              className={`tab-button ${activeTab === 'entities' ? 'active' : ''}`}
-              onClick={() => setActiveTab('entities')}
+              className={`tab-button ${activeTab === "entities" ? "active" : ""}`}
+              onClick={() => setActiveTab("entities")}
             >
               Entities
             </button>
-            <button className={`tab-button ${activeTab === 'hp' ? 'active' : ''}`} onClick={() => setActiveTab('hp')}>
+            <button
+              className={`tab-button ${activeTab === "hp" ? "active" : ""}`}
+              onClick={() => setActiveTab("hp")}
+            >
               HP + Status
             </button>
             <button
-              className={`tab-button ${activeTab === 'initiative' ? 'active' : ''}`}
-              onClick={() => setActiveTab('initiative')}
+              className={`tab-button ${activeTab === "initiative" ? "active" : ""}`}
+              onClick={() => setActiveTab("initiative")}
             >
               Initiative
             </button>
@@ -229,18 +284,20 @@ function App() {
           <main className="board">
             <ActivePanelColumn
               activePanel={activePanel}
-              visible={activeTab === 'panel'}
+              visible={activeTab === "panel"}
               onAddPlayer={handleAddPlayer}
               onAddMonster={addMonsterByIndex}
             />
 
             <EntitiesColumn
               combatants={combatants}
-              visible={activeTab === 'entities'}
+              visible={activeTab === "entities"}
               onRemove={handleRemoveCombatant}
             />
 
-            <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
+            <section
+              className={`column hp-column ${activeTab === "hp" ? "visible" : ""}`}
+            >
               <h2 className="column-title">HP + Status</h2>
               <div className="hp-rows">
                 {combatants.map((combatant) => (
@@ -256,7 +313,9 @@ function App() {
               <ConditionsPalette />
             </section>
 
-            <section className={`column initiative-column ${activeTab === 'initiative' ? 'visible' : ''}`}>
+            <section
+              className={`column initiative-column ${activeTab === "initiative" ? "visible" : ""}`}
+            >
               <h2 className="column-title">Initiative</h2>
               <InitiativePanel
                 sortedCombatants={sortedCombatants}
@@ -278,38 +337,50 @@ function App() {
                 <span className="entity-name">{draggedMonsterName}</span>
               </div>
               {draggedMonsterDetail && (
-                <span className="entity-ac">AC {draggedMonsterDetail.armor_class[0]?.value ?? 10}</span>
+                <span className="entity-ac">
+                  AC {draggedMonsterDetail.armor_class[0]?.value ?? 10}
+                </span>
               )}
             </div>
-            {draggedMonsterDetail && draggedMonsterDetail.actions.length > 0 && (
-              <ul className="entity-abilities">
-                {draggedMonsterDetail.actions.map((action) => (
-                  <li key={action.name}>
-                    <span className="ability-name">{action.name}.</span> {action.desc}
-                  </li>
-                ))}
-              </ul>
-            )}
+            {draggedMonsterDetail &&
+              draggedMonsterDetail.actions.length > 0 && (
+                <ul className="entity-abilities">
+                  {draggedMonsterDetail.actions.map((action) => (
+                    <li key={action.name}>
+                      <span className="ability-name">{action.name}.</span>{" "}
+                      {action.desc}
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
         )}
         {draggedCombatant && (
           <div className="entity-card drag-overlay-card">
             <div className="entity-card-header">
               <span className="entity-name">{draggedCombatant.name}</span>
-              <span className="entity-ac">AC {draggedCombatant.armor_class}</span>
+              <span className="entity-ac">
+                AC {draggedCombatant.armor_class}
+              </span>
             </div>
-            {draggedCombatant.actions && draggedCombatant.actions.length > 0 && (
-              <ul className="entity-abilities">
-                {draggedCombatant.actions.map((action) => (
-                  <li key={action.name}>
-                    <span className="ability-name">{action.name}.</span> {action.desc}
-                  </li>
-                ))}
-              </ul>
-            )}
+            {draggedCombatant.actions &&
+              draggedCombatant.actions.length > 0 && (
+                <ul className="entity-abilities">
+                  {draggedCombatant.actions.map((action) => (
+                    <li key={action.name}>
+                      <span className="ability-name">{action.name}.</span>{" "}
+                      {action.desc}
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
         )}
-        {draggedConditionName && <div className="condition-chip drag-overlay-chip">{draggedConditionName}</div>}
+        {draggedConditionName && (
+          <div className="condition-chip drag-overlay-chip">
+            {draggedConditionName}
+          </div>
+        )}
       </DragOverlay>
     </DndContext>
   );
