@@ -1,7 +1,7 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { Combatant } from '../types/combatant';
-import { DragHandleIcon } from './icons';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { Combatant } from "../types/combatant";
+import { DragHandleIcon } from "./icons";
 
 interface EntityStatCardProps {
   combatant: Combatant;
@@ -9,7 +9,14 @@ interface EntityStatCardProps {
 }
 
 export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: combatant.id,
   });
 
@@ -19,13 +26,29 @@ export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`entity-card ${isDragging ? 'dragging' : ''}`}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`entity-card ${isDragging ? "dragging" : ""}`}
+    >
       <div className="entity-card-header">
+        <button
+          type="button"
+          className="drag-handle"
+          aria-label="Reorder"
+          {...attributes}
+          {...listeners}
+        >
+          <DragHandleIcon />
+        </button>
         <div className="entity-card-title">
-          <button type="button" className="drag-handle" aria-label="Reorder" {...attributes} {...listeners}>
-            <DragHandleIcon />
-          </button>
           <span className="entity-name">{combatant.name}</span>
+          {combatant.srdMonster && (
+            <span className="entity-detail">
+              {combatant.srdMonster.size} {combatant.srdMonster.type},{" "}
+              {combatant.srdMonster.alignment}
+            </span>
+          )}
         </div>
         <div className="entity-card-meta">
           <span className="entity-ac">AC {combatant.armor_class}</span>

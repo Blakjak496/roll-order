@@ -64,7 +64,9 @@
   background: var(--bg);
   color: var(--parchment);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .icon-toggle:hover {
@@ -132,7 +134,7 @@
 
 .column-title {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 1.05rem;
   color: var(--purple-dark);
   padding-bottom: 0.6rem;
@@ -184,12 +186,20 @@
 
 .entity-card-title {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.5rem;
 }
 
 .entity-name {
+  font-family: var(--display);
+}
+
+.entity-detail {
   font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
 }
 
 .drag-handle {
@@ -237,6 +247,7 @@
 .entity-abilities {
   margin: 0.5rem 0 0;
   padding-left: 1.1rem;
+  font-family: var(--serif);
   font-size: 0.85rem;
   color: var(--ink-soft);
 }
@@ -265,12 +276,14 @@
 
 .hp-row.drop-target {
   border-color: var(--purple);
-  box-shadow: 0 0 0 1px var(--purple-border), 0 0 16px rgba(149, 118, 217, 0.35);
+  box-shadow:
+    0 0 0 1px var(--purple-border),
+    0 0 16px rgba(149, 118, 217, 0.35);
 }
 
 .hp-row-name {
   font-weight: 600;
-  font-family: var(--serif);
+  font-family: var(--display);
   color: var(--ink);
 }
 
@@ -369,7 +382,8 @@
   border: 1px solid var(--purple-dark);
   background: var(--bg-chrome);
   color: var(--parchment);
-  font-size: 0.8rem;
+  font-family: var(--serif);
+  font-size: 0.85rem;
   line-height: 1.4;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -391,7 +405,7 @@
 
 .conditions-title {
   margin: 0 0 0.5rem;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 0.8rem;
   color: var(--purple-dark);
   text-transform: uppercase;
