@@ -16,6 +16,11 @@
   font-size: 1.5rem;
 }
 
+.app-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .sidebar-toggle {
   padding: 0.5rem 1rem;
   border: 1px solid var(--accent-border);
@@ -23,6 +28,15 @@
   background: var(--accent-bg);
   color: var(--text-h);
   font-weight: 600;
+  cursor: pointer;
+}
+
+.new-encounter-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
   cursor: pointer;
 }
 

@@ -8,7 +8,7 @@ import { SidePanel } from './components/SidePanel';
 import { fetchMonster } from './api/srdClient';
 import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
 import type { PlayerFormValues } from './data/combatantFactory';
-import { mockCombatants } from './data/mockCombatants';
+import { usePersistedEncounter } from './hooks/usePersistedEncounter';
 import './App.css';
 
 type Tab = 'entities' | 'hp' | 'initiative';
@@ -21,9 +21,8 @@ const TABS: { id: Tab; label: string }[] = [
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
-  const [combatants, setCombatants] = useState(mockCombatants);
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
 
   const sortedCombatants = useMemo(
     () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
@@ -82,9 +81,22 @@ function App() {
       <div className="app-shell">
         <header className="app-header">
           <h1>Roll Order</h1>
-          <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)}>
-            + Add combatant
-          </button>
+          <div className="app-header-actions">
+            <button
+              type="button"
+              className="new-encounter-button"
+              onClick={() => {
+                if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
+                  newEncounter();
+                }
+              }}
+            >
+              New encounter
+            </button>
+            <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)}>
+              + Add combatant
+            </button>
+          </div>
         </header>
 
         <nav className="tab-switcher">
