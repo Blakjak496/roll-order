@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DndContext, DragOverlay, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { ActivePanelColumn } from './components/ActivePanelColumn';
+import type { PanelKind } from './components/ActivePanelColumn';
 import { ConditionsPalette } from './components/ConditionsPalette';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
 import { InitiativePanel } from './components/InitiativePanel';
-import { PanelDock } from './components/PanelDock';
-import type { PanelKind } from './components/PanelDock';
 import { AddPlayerIcon, MonsterIcon } from './components/icons';
 import { fetchMonster } from './api/srdClient';
 import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
@@ -17,13 +17,7 @@ import type { Combatant } from './types/combatant';
 import type { MonsterDetail } from './types/monster';
 import './App.css';
 
-type Tab = 'entities' | 'hp' | 'initiative';
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'entities', label: 'Entities' },
-  { id: 'hp', label: 'HP + Status' },
-  { id: 'initiative', label: 'Initiative' },
-];
+type Tab = 'panel' | 'entities' | 'hp' | 'initiative';
 
 // closestCenter always resolves `over` to the nearest droppable regardless of actual
 // overlap, so picking an item up and barely moving it can otherwise "land" on a target
@@ -33,17 +27,13 @@ function rectsOverlap(a: { left: number; right: number; top: number; bottom: num
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('entities');
-  const [activePanel, setActivePanel] = useState<PanelKind>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('panel');
+  const [activePanel, setActivePanel] = useState<PanelKind>('monster');
   const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
   const [draggedMonsterDetail, setDraggedMonsterDetail] = useState<MonsterDetail | null>(null);
   const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(null);
   const [draggedConditionName, setDraggedConditionName] = useState<string | null>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
-
-  const headerRef = useRef<HTMLElement>(null);
-  const panelRef = useRef<HTMLElement>(null);
-  const iconStripRef = useRef<HTMLElement>(null);
 
   // Requires real movement before a press counts as a drag, so a plain click
   // (or a drag that's released back near its start) never fires a drop.
@@ -53,28 +43,6 @@ function App() {
     () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
     [combatants],
   );
-
-  // Clicking outside the panel or header closes it. Listens for "click" rather
-  // than "pointerdown" - a drag that starts inside the panel and is released
-  // outside it never fires a click at all, so this can't misfire mid-drag.
-  useEffect(() => {
-    if (!activePanel) return;
-
-    function handleClick(e: MouseEvent) {
-      const target = e.target as Node;
-      if (panelRef.current?.contains(target)) return;
-      if (headerRef.current?.contains(target)) return;
-      if (iconStripRef.current?.contains(target)) return;
-      setActivePanel(null);
-    }
-
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-  }, [activePanel]);
-
-  function togglePanel(panel: PanelKind) {
-    setActivePanel((current) => (current === panel ? null : panel));
-  }
 
   function addMonsterByIndex(index: string) {
     fetchMonster(index).then((monster) => {
@@ -195,11 +163,11 @@ function App() {
       collisionDetection={closestCenter}
     >
       <div className="app-root">
-        <aside className="icon-strip" ref={iconStripRef}>
+        <aside className="icon-strip">
           <button
             type="button"
             className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
-            onClick={() => togglePanel('monster')}
+            onClick={() => setActivePanel('monster')}
             aria-pressed={activePanel === 'monster'}
             aria-label="Monster compendium"
             title="Monster compendium"
@@ -209,7 +177,7 @@ function App() {
           <button
             type="button"
             className={`icon-toggle ${activePanel === 'player' ? 'active' : ''}`}
-            onClick={() => togglePanel('player')}
+            onClick={() => setActivePanel('player')}
             aria-pressed={activePanel === 'player'}
             aria-label="Add player"
             title="Add player"
@@ -218,16 +186,8 @@ function App() {
           </button>
         </aside>
 
-        <PanelDock
-          activePanel={activePanel}
-          onClose={() => setActivePanel(null)}
-          onAddPlayer={handleAddPlayer}
-          onAddMonster={addMonsterByIndex}
-          panelRef={panelRef}
-        />
-
         <div className="app-shell">
-          <header className="app-header" ref={headerRef}>
+          <header className="app-header">
             <h1>Roll Order</h1>
             <button
               type="button"
@@ -243,18 +203,37 @@ function App() {
           </header>
 
           <nav className="tab-switcher">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
+            <button
+              className={`tab-button ${activeTab === 'panel' ? 'active' : ''}`}
+              onClick={() => setActiveTab('panel')}
+            >
+              {activePanel === 'monster' ? 'Compendium' : 'Add player'}
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'entities' ? 'active' : ''}`}
+              onClick={() => setActiveTab('entities')}
+            >
+              Entities
+            </button>
+            <button className={`tab-button ${activeTab === 'hp' ? 'active' : ''}`} onClick={() => setActiveTab('hp')}>
+              HP + Status
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'initiative' ? 'active' : ''}`}
+              onClick={() => setActiveTab('initiative')}
+            >
+              Initiative
+            </button>
           </nav>
 
           <main className="board">
+            <ActivePanelColumn
+              activePanel={activePanel}
+              visible={activeTab === 'panel'}
+              onAddPlayer={handleAddPlayer}
+              onAddMonster={addMonsterByIndex}
+            />
+
             <EntitiesColumn
               combatants={combatants}
               visible={activeTab === 'entities'}
