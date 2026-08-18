@@ -34,19 +34,21 @@ function App() {
     [combatants],
   );
 
-  // Clicking outside the panel or the header (which holds its toggle icons) closes it
+  // Clicking outside the panel or header closes it. Listens for "click" rather
+  // than "pointerdown" - a drag that starts inside the panel and is released
+  // outside it never fires a click at all, so this can't misfire mid-drag.
   useEffect(() => {
     if (!activePanel) return;
 
-    function handlePointerDown(e: PointerEvent) {
+    function handleClick(e: MouseEvent) {
       const target = e.target as Node;
       if (panelRef.current?.contains(target)) return;
       if (headerRef.current?.contains(target)) return;
       setActivePanel(null);
     }
 
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
   }, [activePanel]);
 
   function togglePanel(panel: PanelKind) {
