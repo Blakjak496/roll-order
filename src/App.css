@@ -143,6 +143,8 @@
   cursor: grab;
   padding: 0;
   touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .drag-handle:hover {
@@ -473,6 +475,8 @@
   font-size: 0.9rem;
   cursor: grab;
   touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .monster-results li:hover {
@@ -481,6 +485,27 @@
 
 .monster-results li.dragging {
   opacity: 0.5;
+}
+
+.monster-drag-overlay {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  color: var(--text-h);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  cursor: grabbing;
+}
+
+.monster-drag-overlay svg {
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 @media (max-width: 767px) {

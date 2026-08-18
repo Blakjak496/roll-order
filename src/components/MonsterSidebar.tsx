@@ -6,7 +6,7 @@ import type { MonsterSummary } from '../types/monster';
 function MonsterListItem({ monster }: { monster: MonsterSummary }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `monster-${monster.index}`,
-    data: { type: 'monster', index: monster.index },
+    data: { type: 'monster', index: monster.index, name: monster.name },
   });
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { DndContext, closestCenter } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { EntitiesColumn } from './components/EntitiesColumn';
 import { HPStatusRow } from './components/HPStatusRow';
@@ -25,6 +25,7 @@ const TABS: { id: Tab; label: string }[] = [
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
+  const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
 
   const headerRef = useRef<HTMLElement>(null);
@@ -56,7 +57,13 @@ function App() {
     setActivePanel((current) => (current === panel ? null : panel));
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    const data = event.active.data.current;
+    if (data?.type === 'monster') setDraggedMonsterName(data.name ?? null);
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setDraggedMonsterName(null);
     const { active, over } = event;
     if (!over) return;
     const data = active.data.current;
@@ -118,7 +125,13 @@ function App() {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} autoScroll={false} collisionDetection={closestCenter}>
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => setDraggedMonsterName(null)}
+      autoScroll={false}
+      collisionDetection={closestCenter}
+    >
       <div className="app-root">
         <PanelDock
           activePanel={activePanel}
@@ -209,6 +222,15 @@ function App() {
           </main>
         </div>
       </div>
+
+      <DragOverlay>
+        {draggedMonsterName && (
+          <div className="monster-drag-overlay">
+            <MonsterIcon />
+            <span>{draggedMonsterName}</span>
+          </div>
+        )}
+      </DragOverlay>
     </DndContext>
   );
 }
