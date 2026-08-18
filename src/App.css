@@ -119,8 +119,8 @@
 }
 
 .hp-amount {
-  width: 3rem;
-  padding: 0.25rem;
+  width: 3.75rem;
+  padding: 0.3rem;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg);
@@ -221,10 +221,15 @@
   cursor: pointer;
 }
 
-.next-turn-button {
-  width: 100%;
-  padding: 0.6rem;
+.initiative-panel-actions {
+  display: flex;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.next-turn-button {
+  flex: 1;
+  padding: 0.6rem;
   border: 1px solid var(--accent-border);
   border-radius: 6px;
   background: var(--accent-bg);
@@ -236,6 +241,15 @@
 .next-turn-button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.edit-initiative-button {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
 }
 
 .initiative-list {
@@ -261,15 +275,22 @@
   border-color: var(--accent-border);
 }
 
+.initiative-value {
+  font-weight: 700;
+  min-width: 2.5rem;
+  text-align: center;
+  color: var(--text-h);
+}
+
 .initiative-value-input {
   font-weight: 700;
-  width: 2.5rem;
+  width: 3.75rem;
   text-align: center;
   color: var(--text-h);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 0.2rem;
+  padding: 0.3rem;
 }
 
 .monster-sidebar-panel {
