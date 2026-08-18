@@ -23,7 +23,7 @@
   font-size: 1.5rem;
 }
 
-.app-header-actions {
+.app-header-icons {
   display: flex;
   gap: 0.5rem;
 }
@@ -373,13 +373,14 @@
   flex-shrink: 0;
   width: 0;
   overflow: hidden;
-  border-left: 1px solid transparent;
+  background: var(--bg);
+  border-right: 1px solid transparent;
   transition: width 0.25s ease;
 }
 
 .panel-dock.open {
   width: 340px;
-  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 .panel-dock-inner {
@@ -481,11 +482,11 @@
   .panel-dock {
     position: fixed;
     top: 0;
-    right: 0;
+    left: 0;
     height: 100vh;
     width: min(360px, 100vw);
-    border-left: 1px solid var(--border);
-    transform: translateX(100%);
+    border-right: 1px solid var(--border);
+    transform: translateX(-100%);
     transition: transform 0.25s ease;
     z-index: 50;
   }

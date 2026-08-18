@@ -103,21 +103,16 @@ function App() {
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div className="app-root">
+        <PanelDock
+          activePanel={activePanel}
+          onClose={() => setActivePanel(null)}
+          onAddPlayer={handleAddPlayer}
+          panelRef={panelRef}
+        />
+
         <div className="app-shell">
           <header className="app-header" ref={headerRef}>
-            <h1>Roll Order</h1>
-            <div className="app-header-actions">
-              <button
-                type="button"
-                className="new-encounter-button"
-                onClick={() => {
-                  if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
-                    newEncounter();
-                  }
-                }}
-              >
-                New encounter
-              </button>
+            <div className="app-header-icons">
               <button
                 type="button"
                 className={`icon-toggle ${activePanel === 'monster' ? 'active' : ''}`}
@@ -139,6 +134,18 @@ function App() {
                 <AddPlayerIcon />
               </button>
             </div>
+            <h1>Roll Order</h1>
+            <button
+              type="button"
+              className="new-encounter-button"
+              onClick={() => {
+                if (combatants.length === 0 || confirm('Start a new encounter? This clears the current one.')) {
+                  newEncounter();
+                }
+              }}
+            >
+              New encounter
+            </button>
           </header>
 
           <nav className="tab-switcher">
@@ -184,13 +191,6 @@ function App() {
             </section>
           </main>
         </div>
-
-        <PanelDock
-          activePanel={activePanel}
-          onClose={() => setActivePanel(null)}
-          onAddPlayer={handleAddPlayer}
-          panelRef={panelRef}
-        />
       </div>
     </DndContext>
   );
