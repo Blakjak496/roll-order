@@ -61,6 +61,11 @@ function App() {
     setCombatants((prev) => [...prev, playerToCombatant(player)]);
   }
 
+  function handleRemoveCombatant(id: string) {
+    setCombatants((prev) => prev.filter((c) => c.id !== id));
+    setActiveId((prev) => (prev === id ? null : prev));
+  }
+
   function handleSetInitiative(id: string, value: number | null) {
     setCombatants((prev) => prev.map((c) => (c.id === id ? { ...c, initiative: value } : c)));
   }
@@ -95,7 +100,11 @@ function App() {
         </nav>
 
         <main className="board">
-          <EntitiesColumn combatants={combatants} visible={activeTab === 'entities'} />
+          <EntitiesColumn
+            combatants={combatants}
+            visible={activeTab === 'entities'}
+            onRemove={handleRemoveCombatant}
+          />
 
           <section className={`column hp-column ${activeTab === 'hp' ? 'visible' : ''}`}>
             <h2 className="column-title">HP + Status</h2>

@@ -88,8 +88,29 @@
 
 .entity-card-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   font-weight: 600;
+  color: var(--text-h);
+}
+
+.entity-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.entity-remove {
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.entity-remove:hover {
   color: var(--text-h);
 }
 

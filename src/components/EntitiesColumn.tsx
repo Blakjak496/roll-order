@@ -5,9 +5,10 @@ import type { Combatant } from '../types/combatant';
 interface EntitiesColumnProps {
   combatants: Combatant[];
   visible: boolean;
+  onRemove: (id: string) => void;
 }
 
-export function EntitiesColumn({ combatants, visible }: EntitiesColumnProps) {
+export function EntitiesColumn({ combatants, visible, onRemove }: EntitiesColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: 'entities-column' });
 
   return (
@@ -17,7 +18,7 @@ export function EntitiesColumn({ combatants, visible }: EntitiesColumnProps) {
     >
       <h2 className="column-title">Entities</h2>
       {combatants.map((combatant) => (
-        <EntityStatCard key={combatant.id} combatant={combatant} />
+        <EntityStatCard key={combatant.id} combatant={combatant} onRemove={onRemove} />
       ))}
       {combatants.length === 0 && <p className="empty-hint">Drag a monster here from the sidebar</p>}
     </section>
