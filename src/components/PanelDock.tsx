@@ -9,10 +9,11 @@ interface PanelDockProps {
   activePanel: PanelKind;
   onClose: () => void;
   onAddPlayer: (player: PlayerFormValues) => void;
+  onAddMonster: (index: string) => void;
   panelRef: RefObject<HTMLElement | null>;
 }
 
-export function PanelDock({ activePanel, onClose, onAddPlayer, panelRef }: PanelDockProps) {
+export function PanelDock({ activePanel, onClose, onAddPlayer, onAddMonster, panelRef }: PanelDockProps) {
   return (
     <>
       {activePanel && <div className="panel-backdrop" onClick={onClose} />}
@@ -25,7 +26,11 @@ export function PanelDock({ activePanel, onClose, onAddPlayer, panelRef }: Panel
                 ×
               </button>
             </div>
-            {activePanel === 'monster' ? <MonsterSidebar /> : <AddPlayerForm onAdd={onAddPlayer} />}
+            {activePanel === 'monster' ? (
+              <MonsterSidebar onAdd={onAddMonster} />
+            ) : (
+              <AddPlayerForm onAdd={onAddPlayer} />
+            )}
           </div>
         )}
       </aside>

@@ -487,6 +487,23 @@
   opacity: 0.5;
 }
 
+.monster-results li.selected {
+  background: var(--accent-bg);
+  outline: 1px solid var(--accent-border);
+}
+
+.add-selected-monster {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.6rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .monster-drag-overlay {
   display: flex;
   align-items: center;

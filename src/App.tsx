@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import { DndContext, DragOverlay, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { EntitiesColumn } from './components/EntitiesColumn';
@@ -31,6 +31,10 @@ function App() {
   const headerRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLElement>(null);
 
+  // Requires real movement before a press counts as a drag, so a plain click
+  // (or a drag that's released back near its start) never fires a drop.
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
   const sortedCombatants = useMemo(
     () => [...combatants].sort((a, b) => (b.initiative ?? -1) - (a.initiative ?? -1)),
     [combatants],
@@ -57,6 +61,12 @@ function App() {
     setActivePanel((current) => (current === panel ? null : panel));
   }
 
+  function addMonsterByIndex(index: string) {
+    fetchMonster(index).then((monster) => {
+      setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
+    });
+  }
+
   function handleDragStart(event: DragStartEvent) {
     const data = event.active.data.current;
     if (data?.type === 'monster') setDraggedMonsterName(data.name ?? null);
@@ -72,10 +82,7 @@ function App() {
       // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
       const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
       if (!isEntitiesTarget) return;
-
-      fetchMonster(data.index).then((monster) => {
-        setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
-      });
+      addMonsterByIndex(data.index);
       return;
     }
 
@@ -126,6 +133,7 @@ function App() {
 
   return (
     <DndContext
+      sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={() => setDraggedMonsterName(null)}
@@ -137,6 +145,7 @@ function App() {
           activePanel={activePanel}
           onClose={() => setActivePanel(null)}
           onAddPlayer={handleAddPlayer}
+          onAddMonster={addMonsterByIndex}
           panelRef={panelRef}
         />
 
