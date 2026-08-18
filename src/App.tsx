@@ -13,6 +13,7 @@ import { monsterToCombatant, playerToCombatant } from './data/combatantFactory';
 import type { PlayerFormValues } from './data/combatantFactory';
 import { usePersistedEncounter } from './hooks/usePersistedEncounter';
 import type { Combatant } from './types/combatant';
+import type { MonsterDetail } from './types/monster';
 import './App.css';
 
 type Tab = 'entities' | 'hp' | 'initiative';
@@ -27,6 +28,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('entities');
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const [draggedMonsterName, setDraggedMonsterName] = useState<string | null>(null);
+  const [draggedMonsterDetail, setDraggedMonsterDetail] = useState<MonsterDetail | null>(null);
   const [draggedCombatant, setDraggedCombatant] = useState<Combatant | null>(null);
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } = usePersistedEncounter();
 
@@ -73,13 +75,19 @@ function App() {
     const data = event.active.data.current;
     if (data?.type === 'monster') {
       setDraggedMonsterName(data.name ?? null);
+      setDraggedMonsterDetail(null);
+      // Prefetch full detail so the drag overlay can show a real card (AC, abilities)
+      // instead of just a name - usually resolves well before the drag ends.
+      fetchMonster(data.index).then(setDraggedMonsterDetail);
       return;
     }
     setDraggedCombatant(combatants.find((c) => c.id === event.active.id) ?? null);
   }
 
   function handleDragEnd(event: DragEndEvent) {
+    const prefetchedDetail = draggedMonsterDetail;
     setDraggedMonsterName(null);
+    setDraggedMonsterDetail(null);
     setDraggedCombatant(null);
     const { active, over } = event;
     if (!over) return;
@@ -89,7 +97,12 @@ function App() {
       // dropped from the sidebar - valid whether it lands on the column itself or on a card within it
       const isEntitiesTarget = over.id === 'entities-column' || combatants.some((c) => c.id === over.id);
       if (!isEntitiesTarget) return;
-      addMonsterByIndex(data.index);
+
+      if (prefetchedDetail && prefetchedDetail.index === data.index) {
+        setCombatants((prev) => [...prev, monsterToCombatant(prefetchedDetail)]);
+      } else {
+        addMonsterByIndex(data.index);
+      }
       return;
     }
 
@@ -145,6 +158,7 @@ function App() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => {
         setDraggedMonsterName(null);
+        setDraggedMonsterDetail(null);
         setDraggedCombatant(null);
       }}
       autoScroll={false}
@@ -244,15 +258,42 @@ function App() {
 
       <DragOverlay>
         {draggedMonsterName && (
-          <div className="monster-drag-overlay">
-            <MonsterIcon />
-            <span>{draggedMonsterName}</span>
+          <div className="entity-card drag-overlay-card">
+            <div className="entity-card-header">
+              <div className="entity-card-title">
+                <MonsterIcon />
+                <span className="entity-name">{draggedMonsterName}</span>
+              </div>
+              {draggedMonsterDetail && (
+                <span className="entity-ac">AC {draggedMonsterDetail.armor_class[0]?.value ?? 10}</span>
+              )}
+            </div>
+            {draggedMonsterDetail && draggedMonsterDetail.actions.length > 0 && (
+              <ul className="entity-abilities">
+                {draggedMonsterDetail.actions.map((action) => (
+                  <li key={action.name}>
+                    <span className="ability-name">{action.name}.</span> {action.desc}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
         {draggedCombatant && (
-          <div className="entity-drag-overlay">
-            <span className="entity-name">{draggedCombatant.name}</span>
-            <span className="entity-ac">AC {draggedCombatant.ac}</span>
+          <div className="entity-card drag-overlay-card">
+            <div className="entity-card-header">
+              <span className="entity-name">{draggedCombatant.name}</span>
+              <span className="entity-ac">AC {draggedCombatant.ac}</span>
+            </div>
+            {draggedCombatant.abilities && draggedCombatant.abilities.length > 0 && (
+              <ul className="entity-abilities">
+                {draggedCombatant.abilities.map((ability) => (
+                  <li key={ability.name}>
+                    <span className="ability-name">{ability.name}.</span> {ability.desc}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </DragOverlay>
