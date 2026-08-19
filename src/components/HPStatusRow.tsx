@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import type { Combatant } from "../types/combatant";
 import { CONDITIONS } from "../data/conditions";

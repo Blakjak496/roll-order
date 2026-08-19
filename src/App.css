@@ -278,7 +278,7 @@
   color: var(--ink);
   box-shadow: var(--shadow-medium);
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -398,7 +398,7 @@
   color: var(--ink-muted);
   cursor: grab;
   padding: 0;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -726,7 +726,7 @@
   font-size: 10px;
   font-weight: 600;
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-drag: none;
 }
