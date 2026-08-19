@@ -14,6 +14,14 @@ function getDexModifier(combatant: Combatant): number | null {
 const ROLL_DURATION_MS = 900;
 const ROLL_TICK_MS = 60;
 
+interface RollResult {
+  entityId: string;
+  entityName: string;
+  raw: number;
+  mod: number;
+  total: number;
+}
+
 interface InitiativePanelProps {
   sortedCombatants: Combatant[];
   activeId: string | null;
@@ -30,10 +38,10 @@ export function InitiativePanel({
   onNextTurn,
 }: InitiativePanelProps) {
   const [frozenIds, setFrozenIds] = useState<string[] | null>(null);
-  const [rollingValue, setRollingValue] = useState<number | null>(null);
+  const [rollResult, setRollResult] = useState<RollResult | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
   const rollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editing = frozenIds !== null;
-  const rolling = rollingValue !== null;
 
   // Cancel any in-flight roll animation on unmount, so it doesn't try to
   // update state after the panel's gone.
@@ -52,23 +60,32 @@ export function InitiativePanel({
     : sortedCombatants;
 
   function handleRoll() {
-    if (!activeId || rolling) return;
+    if (!activeId || isRolling) return;
     const activeCombatant = sortedCombatants.find((c) => c.id === activeId);
     if (!activeCombatant) return;
-    const dexMod = getDexModifier(activeCombatant) ?? 0;
+    const mod = getDexModifier(activeCombatant) ?? 0;
+    const entityName = activeCombatant.name;
 
+    function rollFrame() {
+      const raw = 1 + Math.floor(Math.random() * 20);
+      setRollResult({ entityId: activeId!, entityName, raw, mod, total: raw + mod });
+    }
+
+    setIsRolling(true);
+    rollFrame();
     const start = Date.now();
-    setRollingValue(1 + Math.floor(Math.random() * 20));
     rollTimerRef.current = setInterval(() => {
       if (Date.now() - start >= ROLL_DURATION_MS) {
         if (rollTimerRef.current) clearInterval(rollTimerRef.current);
         rollTimerRef.current = null;
-        const roll = 1 + Math.floor(Math.random() * 20);
-        onSetInitiative(activeId, roll + dexMod);
-        setRollingValue(null);
+        const raw = 1 + Math.floor(Math.random() * 20);
+        const total = raw + mod;
+        setRollResult({ entityId: activeId!, entityName, raw, mod, total });
+        onSetInitiative(activeId!, total);
+        setIsRolling(false);
         return;
       }
-      setRollingValue(1 + Math.floor(Math.random() * 20));
+      rollFrame();
     }, ROLL_TICK_MS);
   }
 
@@ -101,7 +118,9 @@ export function InitiativePanel({
           const dexMod = getDexModifier(combatant);
           const isActive = combatant.id === activeId;
           const displayInitiative =
-            isActive && rolling ? rollingValue : combatant.initiative;
+            isActive && isRolling && rollResult?.entityId === combatant.id
+              ? rollResult.total
+              : combatant.initiative;
           return (
             <li
               key={combatant.id}
@@ -141,17 +160,27 @@ export function InitiativePanel({
         })}
       </ol>
 
+      {rollResult && (
+        <div className="roll-result">
+          <span className="roll-result-name">{rollResult.entityName}</span>
+          <span className="roll-result-equation">
+            {rollResult.raw} {rollResult.mod >= 0 ? "+" : "-"}{" "}
+            {Math.abs(rollResult.mod)} = {rollResult.total}
+          </span>
+        </div>
+      )}
+
       <button
         type="button"
         className="roll-initiative-button"
         onClick={handleRoll}
-        disabled={!activeId || rolling || editing}
+        disabled={!activeId || isRolling || editing}
         title={
           activeId ? "Roll d20 initiative for the active entity" : "Tap an entity to make it active first"
         }
       >
         <DiceIcon />
-        {rolling ? "Rolling…" : "Roll initiative"}
+        {isRolling ? "Rolling…" : "Roll initiative"}
       </button>
     </div>
   );
