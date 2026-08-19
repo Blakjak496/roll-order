@@ -20,7 +20,6 @@ export function HPStatusRow({
   onAddStatus,
   onRemoveStatus,
 }: HPStatusRowProps) {
-  const [amount, setAmount] = useState(1);
   const availableConditions = CONDITIONS.filter(
     (c) => !combatant.statuses.includes(c.key),
   );
@@ -39,14 +38,14 @@ export function HPStatusRow({
         <span className="max-hp-label">Current HP</span>
         <button
           type="button"
-          onClick={() => onAdjustHP(combatant.id, -amount)}
+          onClick={() => onAdjustHP(combatant.id, -1)}
           aria-label="Damage"
         >
           -
         </button>
         <button
           type="button"
-          onClick={() => onAdjustHP(combatant.id, amount)}
+          onClick={() => onAdjustHP(combatant.id, 1)}
           aria-label="Heal"
         >
           +
