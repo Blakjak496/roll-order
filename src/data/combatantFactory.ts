@@ -1,13 +1,22 @@
 import type { Combatant } from '../types/combatant';
 import type { MonsterDetail } from '../types/monster';
 
-export function monsterToCombatant(monster: MonsterDetail): Combatant {
+// First of a name stays plain ("Goblin"); each further one gets numbered
+// ("Goblin 2", "Goblin 3", ...) so the DM can tell multiple copies apart.
+function nextEntityName(baseName: string, existing: Combatant[]): string {
+  const escaped = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`^${escaped}( \\d+)?$`);
+  const occurrences = existing.filter((c) => pattern.test(c.name)).length;
+  return occurrences === 0 ? baseName : `${baseName} ${occurrences + 1}`;
+}
+
+export function monsterToCombatant(monster: MonsterDetail, existing: Combatant[] = []): Combatant {
   const hp = monster.hit_points;
   return {
     id: crypto.randomUUID(),
     sourceType: 'monster',
     templateIndex: monster.index,
-    name: monster.name,
+    name: nextEntityName(monster.name, existing),
     armor_class: monster.armor_class[0]?.value ?? 10,
     maxHP: hp,
     currentHP: hp,

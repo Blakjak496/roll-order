@@ -585,6 +585,47 @@
   color: var(--hp-danger);
 }
 
+.max-hp-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.max-hp-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-right: 2px;
+}
+
+.max-hp-controls button {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--parchment);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.max-hp-controls button:hover {
+  border-color: var(--parchment-light);
+}
+
+.max-hp-value {
+  min-width: 1.75rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .status-chips {
   display: flex;
   gap: 6px;
@@ -792,6 +833,11 @@
   padding-left: 2.5rem;
   background: var(--parchment);
   position: relative;
+  cursor: pointer;
+}
+
+.initiative-item:hover {
+  border-color: var(--accent-gold);
 }
 
 .initiative-item.active {
@@ -867,6 +913,32 @@
 
 .initiative-item.active .initiative-dex {
   color: var(--text-primary);
+}
+
+.roll-initiative-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  min-height: 38px;
+  border: 1px solid var(--accent-purple);
+  border-radius: var(--radius-small);
+  background: var(--purple-950);
+  color: var(--text-purple);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.roll-initiative-button:hover:not(:disabled) {
+  border-color: var(--accent-purple-bright);
+  box-shadow: var(--shadow-purple);
+}
+
+.roll-initiative-button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* =========================================================

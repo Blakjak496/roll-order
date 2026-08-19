@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -55,10 +56,15 @@ function App() {
   const { combatants, setCombatants, activeId, setActiveId, newEncounter } =
     usePersistedEncounter();
 
-  // Requires real movement before a press counts as a drag, so a plain click
-  // (or a drag that's released back near its start) never fires a drop.
+  // Mouse: distance-based, so a plain click (or a drag released back near its
+  // start) never fires a drop. Touch: delay-based instead, so a scroll swipe
+  // doesn't get mistaken for a pickup - a short hold before movement is what
+  // starts a drag, and moving too far during that hold cancels it.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 8 },
+    }),
   );
 
   const sortedCombatants = useMemo(
@@ -71,7 +77,7 @@ function App() {
 
   function addMonsterByIndex(index: string) {
     fetchMonster(index).then((monster) => {
-      setCombatants((prev) => [...prev, monsterToCombatant(monster)]);
+      setCombatants((prev) => [...prev, monsterToCombatant(monster, prev)]);
     });
   }
 
@@ -116,7 +122,7 @@ function App() {
       if (prefetchedDetail && prefetchedDetail.index === data.index) {
         setCombatants((prev) => [
           ...prev,
-          monsterToCombatant(prefetchedDetail),
+          monsterToCombatant(prefetchedDetail, prev),
         ]);
       } else {
         addMonsterByIndex(data.index);
@@ -157,6 +163,16 @@ function App() {
     );
   }
 
+  function handleAdjustMaxHP(id: string, delta: number) {
+    setCombatants((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const maxHP = Math.max(1, c.maxHP + delta);
+        return { ...c, maxHP, currentHP: Math.min(c.currentHP, maxHP) };
+      }),
+    );
+  }
+
   function handleAddStatus(id: string, status: string) {
     setCombatants((prev) =>
       prev.map((c) =>
@@ -188,6 +204,10 @@ function App() {
     setCombatants((prev) =>
       prev.map((c) => (c.id === id ? { ...c, initiative: value } : c)),
     );
+  }
+
+  function handleSelectActive(id: string) {
+    setActiveId(id);
   }
 
   function handleNextTurn() {
@@ -305,6 +325,7 @@ function App() {
                     key={combatant.id}
                     combatant={combatant}
                     onAdjustHP={handleAdjustHP}
+                    onAdjustMaxHP={handleAdjustMaxHP}
                     onAddStatus={handleAddStatus}
                     onRemoveStatus={handleRemoveStatus}
                   />
@@ -321,6 +342,7 @@ function App() {
                 sortedCombatants={sortedCombatants}
                 activeId={activeId}
                 onSetInitiative={handleSetInitiative}
+                onSelectActive={handleSelectActive}
                 onNextTurn={handleNextTurn}
               />
             </section>

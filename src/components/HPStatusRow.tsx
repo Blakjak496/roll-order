@@ -8,11 +8,18 @@ import { HeartIcon } from './icons';
 interface HPStatusRowProps {
   combatant: Combatant;
   onAdjustHP: (id: string, delta: number) => void;
+  onAdjustMaxHP: (id: string, delta: number) => void;
   onAddStatus: (id: string, status: string) => void;
   onRemoveStatus: (id: string, status: string) => void;
 }
 
-export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus }: HPStatusRowProps) {
+export function HPStatusRow({
+  combatant,
+  onAdjustHP,
+  onAdjustMaxHP,
+  onAddStatus,
+  onRemoveStatus,
+}: HPStatusRowProps) {
   const [amount, setAmount] = useState(1);
   const availableConditions = CONDITIONS.filter((c) => !combatant.statuses.includes(c.key));
   const { setNodeRef, isOver } = useDroppable({ id: `hp-row-${combatant.id}` });
@@ -42,6 +49,25 @@ export function HPStatusRow({ combatant, onAdjustHP, onAddStatus, onRemoveStatus
           <HeartIcon />
           {combatant.currentHP} / {combatant.maxHP}
         </span>
+      </div>
+
+      <div className="max-hp-controls">
+        <span className="max-hp-label">Max HP</span>
+        <button
+          type="button"
+          onClick={() => onAdjustMaxHP(combatant.id, -1)}
+          aria-label="Decrease max HP"
+        >
+          -
+        </button>
+        <span className="max-hp-value">{combatant.maxHP}</span>
+        <button
+          type="button"
+          onClick={() => onAdjustMaxHP(combatant.id, 1)}
+          aria-label="Increase max HP"
+        >
+          +
+        </button>
       </div>
 
       <div className="status-chips">

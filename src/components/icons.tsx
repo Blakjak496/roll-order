@@ -70,6 +70,25 @@ export function EditIcon() {
   );
 }
 
+export function DiceIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="16"
+      height="16"
+      aria-hidden="true"
+    >
+      <path d="M12 2.5l9 5.2v8.6l-9 5.2-9-5.2V7.7z" />
+      <path d="M12 2.5v9.5M3 7.7l9 4.3M21 7.7l-9 4.3M12 21.5V12" />
+    </svg>
+  );
+}
+
 export function CheckIcon() {
   return (
     <svg
