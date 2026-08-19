@@ -63,7 +63,7 @@ function App() {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 800, tolerance: 8 },
+      activationConstraint: { delay: 200, tolerance: 8 },
     }),
   );
 
