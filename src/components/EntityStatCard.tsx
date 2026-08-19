@@ -1,7 +1,17 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { formatModifier } from "../data/abilityScores";
 import type { Combatant } from "../types/combatant";
 import { DragHandleIcon } from "./icons";
+
+const STAT_LABELS = ["STR", "DEX", "INT", "CON", "WIS"] as const;
+const STAT_KEYS = [
+  "strength",
+  "dexterity",
+  "intelligence",
+  "constitution",
+  "wisdom",
+] as const;
 
 interface EntityStatCardProps {
   combatant: Combatant;
@@ -62,6 +72,21 @@ export function EntityStatCard({ combatant, onRemove }: EntityStatCardProps) {
           </button>
         </div>
       </div>
+      {combatant.srdMonster && (
+        <div className="entity-stats">
+          {STAT_LABELS.map((label, i) => {
+            const score = combatant.srdMonster![STAT_KEYS[i]];
+            return (
+              <div key={label} className="entity-stat">
+                <span className="entity-stat-label">{label}</span>
+                <span className="entity-stat-value">
+                  {score} ({formatModifier(score)})
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
       {combatant.actions && combatant.actions.length > 0 && (
         <ul className="entity-abilities">
           {combatant.actions.map((action) => (

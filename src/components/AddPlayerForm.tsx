@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import type { FormEvent } from 'react';
-import type { PlayerFormValues } from '../data/combatantFactory';
+import { useState } from "react";
+import type { FormEvent } from "react";
+import type { PlayerFormValues } from "../data/combatantFactory";
 
 interface AddPlayerFormProps {
   onAdd: (player: PlayerFormValues) => void;
 }
 
-const EMPTY = { name: '', armor_class: '', maxHP: '', initiativeBonus: '' };
+const EMPTY = { name: "", armor_class: "", maxHP: "", initiativeBonus: "" };
 
 export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
   const [values, setValues] = useState(EMPTY);
@@ -16,13 +16,20 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
     const name = values.name.trim();
     const armor_class = Number(values.armor_class);
     const maxHP = Number(values.maxHP);
-    if (!name || !Number.isFinite(armor_class) || !Number.isFinite(maxHP) || maxHP <= 0) return;
+    if (
+      !name ||
+      !Number.isFinite(armor_class) ||
+      !Number.isFinite(maxHP) ||
+      maxHP <= 0
+    )
+      return;
 
     onAdd({
       name,
       armor_class,
       maxHP,
-      initiativeBonus: values.initiativeBonus === '' ? null : Number(values.initiativeBonus),
+      initiativeBonus:
+        values.initiativeBonus === "" ? null : Number(values.initiativeBonus),
     });
     setValues(EMPTY);
   }
@@ -52,9 +59,11 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
       />
       <input
         type="number"
-        placeholder="Init. bonus (optional)"
+        placeholder="DEX modifier (optional)"
         value={values.initiativeBonus}
-        onChange={(e) => setValues({ ...values, initiativeBonus: e.target.value })}
+        onChange={(e) =>
+          setValues({ ...values, initiativeBonus: e.target.value })
+        }
       />
       <button type="submit">Add player</button>
     </form>

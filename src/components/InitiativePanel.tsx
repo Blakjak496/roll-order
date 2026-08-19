@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatModifier } from "../data/abilityScores";
 import type { Combatant } from "../types/combatant";
 import { CheckIcon, EditIcon } from "./icons";
 
@@ -76,11 +77,18 @@ export function InitiativePanel({
                 {combatant.initiative ?? "—"}
               </div>
             )}
-            <span
-              className={`initiative-name ${combatant.id === activeId ? "active" : ""}`}
-            >
-              {combatant.name}
-            </span>
+            <div className="initiative-name-block">
+              <span
+                className={`initiative-name ${combatant.id === activeId ? "active" : ""}`}
+              >
+                {combatant.name}
+              </span>
+              {combatant.srdMonster && (
+                <span className="initiative-dex">
+                  (DEX {formatModifier(combatant.srdMonster.dexterity)})
+                </span>
+              )}
+            </div>
           </li>
         ))}
       </ol>

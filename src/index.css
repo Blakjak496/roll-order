@@ -89,10 +89,10 @@
      GAME STATES
      ========================================================= */
 
-  --hp-good: #719b62;
+  --hp-good: #669a53;
   --hp-good-bg: #1d3020;
 
-  --hp-warning: #b69a50;
+  --hp-warning: #9c7919;
   --hp-warning-bg: #352d18;
 
   --hp-danger: #a84e4e;
@@ -128,9 +128,9 @@
      TYPOGRAPHY
      ========================================================= */
 
-  --font-display: 'Cinzel', serif;
-  --font-body: 'Crimson Text', serif;
-  --font-ui: 'Inter', sans-serif;
+  --font-display: "Cinzel", serif;
+  --font-body: "Crimson Text", serif;
+  --font-ui: "Inter", sans-serif;
 
   color-scheme: dark;
   font-synthesis: none;
@@ -153,7 +153,11 @@ body,
 
 body {
   background:
-    radial-gradient(circle at 50% 35%, rgba(105, 53, 120, 0.08), transparent 45%),
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(105, 53, 120, 0.08),
+      transparent 45%
+    ),
     var(--bg-void);
   color: var(--text-primary);
   font-family: var(--font-ui);

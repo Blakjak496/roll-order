@@ -384,8 +384,9 @@
 .entity-detail {
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 0.82rem;
+  font-size: 14px;
   color: var(--ink-muted);
+  text-transform: capitalize;
 }
 
 .drag-handle {
@@ -414,10 +415,10 @@
 }
 
 .entity-ac {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--ink);
 }
 
 .entity-remove {
@@ -432,6 +433,37 @@
 
 .entity-remove:hover {
   color: var(--hp-danger);
+}
+
+.entity-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--parchment-dark);
+}
+
+.entity-stat {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.entity-stat-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+
+.entity-stat-value {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .entity-abilities {
@@ -809,16 +841,32 @@
   padding: 0.3rem;
 }
 
+.initiative-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 2;
+}
+
 .initiative-name {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 13px;
   color: var(--ink);
-  z-index: 2;
 }
 
 .initiative-name.active {
   color: var(--text-primary);
+}
+
+.initiative-dex {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.initiative-item.active .initiative-dex {
+  color: var(--text-secondary);
 }
 
 /* =========================================================
