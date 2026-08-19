@@ -12,6 +12,9 @@ export interface Combatant {
   currentHP: number;
   statuses: string[];
   initiative: number | null;
+  // Display-only DEX modifier for player combatants (monsters read theirs
+  // from srdMonster.dexterity instead) - not applied to initiative automatically
+  dexModifier?: number | null;
   // Snapshot at creation time, named to match the SRD's "actions" field it's copied from
   actions?: MonsterAction[];
   // Full raw SRD response, kept only for monster-sourced combatants so any

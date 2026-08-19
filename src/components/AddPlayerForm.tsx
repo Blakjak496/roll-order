@@ -6,7 +6,7 @@ interface AddPlayerFormProps {
   onAdd: (player: PlayerFormValues) => void;
 }
 
-const EMPTY = { name: "", armor_class: "", maxHP: "", initiativeBonus: "" };
+const EMPTY = { name: "", armor_class: "", maxHP: "", dexModifier: "" };
 
 export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
   const [values, setValues] = useState(EMPTY);
@@ -28,8 +28,8 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
       name,
       armor_class,
       maxHP,
-      initiativeBonus:
-        values.initiativeBonus === "" ? null : Number(values.initiativeBonus),
+      dexModifier:
+        values.dexModifier === "" ? null : Number(values.dexModifier),
     });
     setValues(EMPTY);
   }
@@ -60,10 +60,8 @@ export function AddPlayerForm({ onAdd }: AddPlayerFormProps) {
       <input
         type="number"
         placeholder="DEX modifier (optional)"
-        value={values.initiativeBonus}
-        onChange={(e) =>
-          setValues({ ...values, initiativeBonus: e.target.value })
-        }
+        value={values.dexModifier}
+        onChange={(e) => setValues({ ...values, dexModifier: e.target.value })}
       />
       <button type="submit">Add player</button>
     </form>

@@ -22,7 +22,7 @@ export interface PlayerFormValues {
   name: string;
   armor_class: number;
   maxHP: number;
-  initiativeBonus: number | null;
+  dexModifier: number | null;
 }
 
 export function playerToCombatant(player: PlayerFormValues): Combatant {
@@ -34,6 +34,9 @@ export function playerToCombatant(player: PlayerFormValues): Combatant {
     maxHP: player.maxHP,
     currentHP: player.maxHP,
     statuses: [],
-    initiative: player.initiativeBonus,
+    // Set manually in the initiative panel, same as monsters - the DEX
+    // modifier is display-only for now, not auto-applied to a roll
+    initiative: null,
+    dexModifier: player.dexModifier,
   };
 }

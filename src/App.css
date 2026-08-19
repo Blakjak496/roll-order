@@ -862,11 +862,11 @@
 .initiative-dex {
   font-family: var(--font-ui);
   font-size: 11px;
-  color: var(--ink-muted);
+  color: var(--ink);
 }
 
 .initiative-item.active .initiative-dex {
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 /* =========================================================
